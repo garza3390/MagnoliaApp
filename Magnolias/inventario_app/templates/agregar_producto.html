@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+
+{% block title %}Agregar Producto{% endblock %}
+{% block header %}Agregar Producto{% endblock %}
+
+{% block content %}
+<div class="container">
+    <form method="post">
+        {% csrf_token %}
+
+        <!-- Código del producto -->
+        <div class="form-group">
+            {{ form.codigo_producto.label_tag }}
+            {{ form.codigo_producto }}
+        </div>
+
+        <!-- Nombre del producto -->
+        <div class="form-group">
+            {{ form.nombre_producto.label_tag }}
+            {{ form.nombre_producto }}
+        </div>
+
+        <!-- Código de barras -->
+        <div class="form-group">
+            {{ form.codigo_barras.label_tag }}
+            {{ form.codigo_barras }}
+        </div>
+
+        <!-- Valor sin IVA (editable) -->
+        <div class="form-group">
+            {{ form.valor_sin_iva.label_tag }}
+            {{ form.valor_sin_iva }}
+        </div>
+
+        <!-- IVA calculado automáticamente (solo lectura) -->
+        <div class="form-group">
+            <label for="calculated_iva">IVA (13%):</label>
+            <input type="text" id="calculated_iva" class="form-control" readonly>
+        </div>
+
+        <!-- Valor con IVA calculado automáticamente (solo lectura) -->
+        <div class="form-group">
+            <label for="calculated_valor_con_iva">Valor con IVA:</label>
+            <input type="text" id="calculated_valor_con_iva" class="form-control" readonly>
+        </div>
+
+        <!-- Porcentaje de merma -->
+        <div class="form-group">
+            {{ form.porcentaje_merma.label_tag }}
+            {{ form.porcentaje_merma }}
+        </div>
+
+        <!-- Porcentaje de temporada -->
+        <div class="form-group">
+            {{ form.porcentaje_temporada.label_tag }}
+            {{ form.porcentaje_temporada }}
+        </div>
+
+        <!-- Botón de envío -->
+        <button type="submit" class="btn btn-success btn-block">Guardar Producto</button>
+    </form>
+
+    <a href="{% url 'edit' %}" class="btn btn-secondary btn-block mt-2">Volver al Inicio</a>
+</div>
+
+<script>
+    // JavaScript para calcular IVA y Valor con IVA en tiempo real
+    document.getElementById("id_valor_sin_iva").addEventListener("input", function() {
+        var valorSinIva = parseFloat(this.value) || 0;  // Obtiene el valor ingresado o 0 si está vacío
+        var iva = valorSinIva * 0.13;  // Calcula el IVA como el 13% del valor sin IVA
+        var valorConIva = valorSinIva + iva;  // Suma el IVA al valor sin IVA para obtener el total con IVA
+
+        // Muestra los valores calculados en los campos correspondientes
+        document.getElementById("calculated_iva").value = iva.toFixed(2);
+        document.getElementById("calculated_valor_con_iva").value = valorConIva.toFixed(2);
+    });
+</script>
+{% endblock %}

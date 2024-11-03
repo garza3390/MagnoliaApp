@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+{% block title %}Editar Información de la Cadena{% endblock %}
+{% block header %}Editar Información de la Cadena{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2 class="text-center">Modificar Información de Cadena</h2>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn btn-success btn-block">Guardar Cambios</button>
+    </form>
+    <a href="{% url 'edit' %}" class="btn btn-secondary btn-block mt-2">Volver al Inicio</a>
+</div>
+{% endblock %}

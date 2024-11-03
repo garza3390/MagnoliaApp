@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+
+{% block title %}Seleccionar Tienda{% endblock %}
+{% block content %}
+<h2>Selecciona una Tienda</h2>
+<form method="post">
+    {% csrf_token %}
+    <label for="tienda_id">ID de Tienda:</label>
+    <input type="text" name="tienda_id" id="tienda_id" required>
+    <button type="submit" class="btn btn-primary">Continuar</button>
+</form>
+
+<a href="{% url 'edit' %}" class="btn btn-primary btn-block my-2">Editar Información</a>
+{% endblock %}

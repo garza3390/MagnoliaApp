@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% block title %}Agregar Visita de Inventario{% endblock %}
+{% block header %}Agregar Visita de Inventario{% endblock %}
+
+{% block content %}
+<div class="container">
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn btn-success btn-block">Guardar Visita</button>
+    </form>
+    <a href="{% url 'edit' %}" class="btn btn-secondary btn-block mt-2">Volver al Inicio</a>
+</div>
+{% endblock %}

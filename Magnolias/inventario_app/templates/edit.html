@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+
+{% block title %}Inicio - Inventario{% endblock %}
+{% block header %}Inicio{% endblock %}
+
+{% block content %}
+<div class="text-center">
+    <a href="{% url 'editar_cadena_informacion' %}" class="btn btn-warning btn-block my-2">Editar Información de Cadena</a>
+    <a href="{% url 'agregar_tienda' %}" class="btn btn-primary btn-block my-2">Agregar Tienda</a>
+    <a href="{% url 'agregar_producto' %}" class="btn btn-primary btn-block my-2">Agregar Producto</a>
+    <a href="{% url 'seleccionar_tienda' %}" class="btn btn-secondary btn-block mt-2">Volver al Inicio</a>
+</div>
+{% endblock %}
