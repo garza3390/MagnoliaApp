@@ -2,12 +2,14 @@
 
 {% block title %}Registrar Visita de Inventario{% endblock %}
 {% block content %}
-<h2>Registro de Visita de Inventario para Tienda {{ tienda.id }}</h2>
+<h2>Registro de Visita de Inventario para Tienda {{ tienda.codigo_tienda }}</h2>
 
 <div>
-    <p><strong>Fecha entrega anterior:</strong> {{ fecha_entrega_anterior }}</p>
+    {% if not primera_vez %}
+        <p><strong>Fecha entrega anterior:</strong> {{ fecha_visita_anterior|date:"d/M/Y" }}</p>
+        <p><strong>Inventario inicial:</strong> {{ inventario_inicial }}</p>
+    {% endif %}
     <p><strong>Fecha actual:</strong> {{ fecha_actual }}</p>
-    <p><strong>Días transcurridos:</strong> {{ dias_transcurridos }}</p>
     <p><strong>Días de cobertura:</strong> {{ dias_de_cobertura }}</p>
 </div>
 
@@ -16,25 +18,43 @@
     <table class="table table-bordered">
         <thead>
             <tr>
-                <th>Productos</th>
-                <th>Cantidad entregada</th>
-                <th>Conteo físico</th>
-                <th>Por vencer</th>
-                <th>Devolución ND</th>
-                <th>Canje directo</th>
-                <!-- Agrega más columnas según sea necesario -->
+                <th>Producto ID</th>
+                {% if primera_vez %}
+                    <th>Existencia informe AMPM</th>
+                    <th>Conteo físico</th>
+                    <th>Cantidad por vencer</th>
+                    <th>Devolución</th>
+                    <th>Canje</th>
+                    <th>Inventario sistema AMPM</th>
+                    <th>Mínimo display</th>
+                {% else %}
+                    <th>Conteo físico</th>
+                    <th>Cantidad por vencer</th>
+                    <th>Devolución</th>
+                    <th>Canje</th>
+                    <th>Mínimo display</th>
+                {% endif %}
             </tr>
         </thead>
         <tbody>
             {% for producto in productos %}
             <tr>
                 <td>{{ producto.codigo_producto }}</td>
-                <td><input type="number" name="cantidad_entregada_{{ producto.id }}" class="form-control" value="0"></td>
-                <td><input type="number" name="conteo_fisico_{{ producto.id }}" class="form-control" value="0"></td>
-                <td><input type="number" name="por_vencer_{{ producto.id }}" class="form-control" value="0"></td>
-                <td><input type="number" name="devolucion_{{ producto.id }}" class="form-control" value="0"></td>
-                <td><input type="number" name="canje_directo_{{ producto.id }}" class="form-control" value="0"></td>
-                <!-- Agrega más campos según los valores a ingresar -->
+                {% if primera_vez %}
+                    <td><input type="number" name="existencia_informe_{{ producto.id }}" class="form-control" value="0"></td>
+                    <td><input type="number" name="conteo_fisico_{{ producto.id }}" class="form-control" value="0"></td>
+                    <td><input type="number" name="por_vencer_{{ producto.id }}" class="form-control" value="0"></td>
+                    <td><input type="number" name="devolucion_{{ producto.id }}" class="form-control" value="0"></td>
+                    <td><input type="number" name="canje_{{ producto.id }}" class="form-control" value="0"></td>
+                    <td><input type="number" name="inventario_sistema_{{ producto.id }}" class="form-control" value="0"></td>
+                    <td><input type="number" name="minimo_display_{{ producto.id }}" class="form-control" value="0"></td>
+                {% else %}
+                    <td><input type="number" name="conteo_fisico_{{ producto.id }}" class="form-control" value="0"></td>
+                    <td><input type="number" name="por_vencer_{{ producto.id }}" class="form-control" value="0"></td>
+                    <td><input type="number" name="devolucion_{{ producto.id }}" class="form-control" value="0"></td>
+                    <td><input type="number" name="canje_{{ producto.id }}" class="form-control" value="0"></td>
+                    <td><input type="number" name="minimo_display_{{ producto.id }}" class="form-control" value="0"></td>
+                {% endif %}
             </tr>
             {% endfor %}
         </tbody>
