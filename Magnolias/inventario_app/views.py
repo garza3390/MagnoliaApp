@@ -236,7 +236,8 @@ def registrar_visita_inventario(request, tienda_id):
         'primera_vez': primera_vez,
         'fecha_visita_anterior': fecha_visita_anterior,
         'inventario_inicial': inv_inicial,
-        'dias_entre_visitas': dias_entre_visitas
+        'dias_entre_visitas': dias_entre_visitas,
+        'precios_productos' : [p.valor_con_iva for p in productos]
     }
     rb = False
     if not primera_vez:
@@ -263,7 +264,7 @@ def registrar_visita_inventario(request, tienda_id):
         context['all_data'] = all_data
         context['final_d'] = json.loads(visita_existente.devolucion)
         context['final_e'] = json.loads(visita_existente.entregado_real)
-        context['precios_productos'] = [p.valor_con_iva for p in productos]
+        
         
 
 
