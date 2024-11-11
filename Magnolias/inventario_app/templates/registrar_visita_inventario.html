@@ -2,63 +2,277 @@
 
 {% block title %}Registrar Visita de Inventario{% endblock %}
 {% block content %}
-<h2>Registro de Visita de Inventario para Tienda {{ tienda.codigo_tienda }}</h2>
+<h2>Registro de Visita de Inventario para Tienda <strong>{{ tienda.nombre_tienda }}</strong> : {{ tienda.codigo_tienda }}</h2>
 
 <div>
-    {% if not primera_vez %}
-        <p><strong>Fecha entrega anterior:</strong> {{ fecha_visita_anterior|date:"d/M/Y" }}</p>
-        <p><strong>Inventario inicial:</strong> {{ inventario_inicial }}</p>
-    {% endif %}
-    <p><strong>Fecha actual:</strong> {{ fecha_actual }}</p>
+    <p><strong>Semana:</strong> {{ semana_actual }}</p>
+    <p><strong>Código de Tienda:</strong> {{ tienda.codigo_tienda }}</p>
+    <p><strong>Fecha entrega anterior:</strong> {{ fecha_visita_anterior|date:"d/M/Y" }}</p>
+    <p><strong>Fecha actual:</strong> {{ fecha_actual|date:"d/M/Y" }}</p>
+    <p name="dvisitas"><strong>Días entre visitas:</strong> {{ dias_entre_visitas }}</p>
     <p><strong>Días de cobertura:</strong> {{ dias_de_cobertura }}</p>
 </div>
 
 <form method="post">
     {% csrf_token %}
+    
+    <style>
+
+        .table-container {
+            overflow-x: auto; /* Habilita el desplazamiento horizontal */
+            -webkit-overflow-scrolling: touch; /* Para una mejor experiencia en dispositivos móviles */
+            width: 100%; /* Asegura que el contenedor ocupe todo el ancho */
+        }
+
+        .table {
+            width: 100%; /* La tabla ocupará todo el ancho del contenedor */
+            table-layout: auto; /* Permite que las columnas se ajusten automáticamente */
+        }
+
+        .table th, .table td {
+            min-width: 80px; /* Ajusta según sea necesario */
+            max-width: 120px; /* Limita el ancho máximo */
+            text-align: center;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: normal; /* Permite que el texto se envuelva en varias líneas */
+            
+        }
+
+        .table th {
+            color: rgb(0, 0, 0); /* Blanco semi-transparente */
+            background-color: rgba(106, 169, 236, 0.5); /* Azul semi-transparente */
+            font-weight: bold;
+            word-break: break-all; /* Asegura que los títulos largos se dividan en palabras */
+            padding: 10px; /* Espacio interno para que el texto tenga margen */
+        }
+
+        .table input.form-control {
+            width: 100%; /* Hace que el input ocupe todo el ancho de la celda */
+            box-sizing: border-box; /* Asegura que el padding no haga que el input exceda el tamaño */
+            min-width: 90px; /* Aumenta el ancho mínimo para que los números de 3 dígitos se vean claramente */
+        }
+
+
+
+    </style>
+
+
+<div class="table-container">
     <table class="table table-bordered">
         <thead>
+            <!-- TODO: Add the ampm fields, this needs to add zip list -->
             <tr>
                 <th>Producto ID</th>
-                {% if primera_vez %}
-                    <th>Existencia informe AMPM</th>
-                    <th>Conteo físico</th>
-                    <th>Cantidad por vencer</th>
-                    <th>Devolución</th>
-                    <th>Canje</th>
-                    <th>Inventario sistema AMPM</th>
-                    <th>Mínimo display</th>
-                {% else %}
-                    <th>Conteo físico</th>
-                    <th>Cantidad por vencer</th>
-                    <th>Devolución</th>
-                    <th>Canje</th>
-                    <th>Mínimo display</th>
-                {% endif %}
+                <th>Nombre Producto</th>
+                <th>Inventario inicial</th>
+                <th>Existencia AM_PM</th>
+                <th>Conteo físico</th>
+                <th>Cantidad por vencer</th>
+                <th>Devolución</th>
+                <th>Canje</th>
+                <th>Ajuste</th>
+                <th>Inventario AM_PM</th>
+                <th>Sugerido AM_PM</th>
+                <th>Mínimo display</th>
+                <th>Recomendado por Magnolias</th>
+                <th>Entrega Real</th>
+
             </tr>
         </thead>
         <tbody>
+            {% if primera_vez %}
             {% for producto in productos %}
-            <tr>
+            <tr data-precio="{{ producto.valor_con_iva }}">
                 <td>{{ producto.codigo_producto }}</td>
-                {% if primera_vez %}
-                    <td><input type="number" name="existencia_informe_{{ producto.id }}" class="form-control" value="0"></td>
-                    <td><input type="number" name="conteo_fisico_{{ producto.id }}" class="form-control" value="0"></td>
-                    <td><input type="number" name="por_vencer_{{ producto.id }}" class="form-control" value="0"></td>
-                    <td><input type="number" name="devolucion_{{ producto.id }}" class="form-control" value="0"></td>
-                    <td><input type="number" name="canje_{{ producto.id }}" class="form-control" value="0"></td>
-                    <td><input type="number" name="inventario_sistema_{{ producto.id }}" class="form-control" value="0"></td>
-                    <td><input type="number" name="minimo_display_{{ producto.id }}" class="form-control" value="0"></td>
-                {% else %}
-                    <td><input type="number" name="conteo_fisico_{{ producto.id }}" class="form-control" value="0"></td>
-                    <td><input type="number" name="por_vencer_{{ producto.id }}" class="form-control" value="0"></td>
-                    <td><input type="number" name="devolucion_{{ producto.id }}" class="form-control" value="0"></td>
-                    <td><input type="number" name="canje_{{ producto.id }}" class="form-control" value="0"></td>
-                    <td><input type="number" name="minimo_display_{{ producto.id }}" class="form-control" value="0"></td>
-                {% endif %}
+                <td>{{ producto.nombre_producto }}</td>
+                <td>
+                    <input type="number" name="inventario_inicial_{{ producto.id }}" class="form-control" 
+                           value="{{ 0 }}"
+                           {% if not primera_vez %}readonly{% endif %}>
+                </td>
+                <td><input type="number" name="existencia_ampm_{{ producto.id }}" class="form-control existencia-ampm" value=0></td>
+                <td><input type="number" name="conteo_fisico_{{ producto.id }}" class="form-control conteo-fisico" value=0></td>
+                <td><input type="number" name="por_vencer_{{ producto.id }}" class="form-control" value=0></td>
+                <td><input type="number" name="devolucion_{{ producto.id }}" class="form-control" value=0></td>
+                <td><input type="number" name="canje_{{ producto.id }}" class="form-control" value=0></td>
+                <td>
+                    <input type="number" name="ajuste_{{ producto.id }}" class="form-control" value=0>
+                </td>
+                <td><input type="number" name="inventario_ampm_{{ producto.id }}" class="form-control inventario-ampm" value=0></td>
+                <td><input type="number" name="sugerido_ampm_{{ producto.id }}" class="form-control sugerido-ampm" value=0></td>
+                <td><input type="number" name="minimo_display_{{ producto.id }}" class="form-control" value=0></td>
+                <td><input type="number" name="recomendado_M_{{ producto.id }}" class="form-control" value=0></td>
+                <td><input type="number" name="entregado_real_{{ producto.id }}" class="form-control" value=0></td>
             </tr>
             {% endfor %}
+            {% else %}
+            {% for p,invi,e_ampm,cf,pven,dev,canj,aj,i_ampm,s_ampm,md,m_rec,e_real in all_data %}
+            <tr data-precio="{{ p.valor_con_iva }}">
+                <td>{{ p.codigo_producto }}</td>
+                <td>{{ p.nombre_producto }}</td>
+                <td>
+                    <input type="number" name="inventario_inicial_{{ p.id }}" class="form-control" 
+                           value="{{ invi }}"
+                           {% if not primera_vez %}readonly{% endif %}>
+                </td>
+                <td><input type="number" name="existencia_ampm_{{ p.id }}" class="form-control existencia-ampm" value={{e_ampm}}></td>
+                <td><input type="number" name="conteo_fisico_{{ p.id }}" class="form-control conteo-fisico" value={{cf}}></td>
+                <td><input type="number" name="por_vencer_{{ p.id }}" class="form-control" value={{pven}}></td>
+                <td><input type="number" name="devolucion_{{ p.id }}" class="form-control" value={{dev}}></td>
+                <td><input type="number" name="canje_{{ p.id }}" class="form-control" value={{canj}}></td>
+                <td>
+                    <input type="number" name="ajuste_{{ p.id }}" class="form-control" value="{{ aj }}" readonly>
+                </td>
+                <td><input type="number" name="inventario_ampm_{{ p.id }}" class="form-control inventario-ampm" value={{i_ampm}}></td>
+                <td><input type="number" name="sugerido_ampm_{{ p.id }}" class="form-control sugerido-ampm" value={{s_ampm}}></td>
+                <td><input type="number" name="minimo_display_{{ p.id }}" class="form-control" value={{md}}></td>
+                <td><input type="number" name="recomendado_M_{{ producto.id }}" class="form-control" value={{m_rec}} readonly></td>
+                <td><input type="number" name="entregado_real_{{ producto.id }}" class="form-control" value={{e_real}} readonly></td>
+            </tr>
+            {% endfor %}
+            {% endif %}
         </tbody>
     </table>
+</div>
+
+    <!-- Venta Total calculada con JavaScript -->
+    <div class="form-group">
+        <label for="venta_total"><strong>Venta Total:</strong></label>
+        <input type="text" id="venta_total" class="form-control" readonly>
+        <label for="devolucion_total"><strong>Devolución Total:</strong></label>
+        <input type="text" id="devolucion_total" class="form-control" readonly>
+    </div>
+
+
+    <div class="form-group">
+    <label for="registro_bloqueado">
+        {% if rb %}
+        <input type="checkbox" name="registro_bloqueado" id="registro_bloqueado" checked>
+        {% else %}
+        <input type="checkbox" name="registro_bloqueado" id="registro_bloqueado">
+        {% endif %}
+        Bloquear registro
+    </label>
+</div>
+
+
     <button type="submit" class="btn btn-primary">Guardar Visita de Inventario</button>
 </form>
+
+<a href="{% url 'seleccionar_tienda' %}" class="btn btn-secondary btn-block mt-2">Volver al Inicio</a>
+
+<script>
+
+
+    function calculateFields() {
+        // Extraer días de cobertura (puedes ajustar este valor o hacerlo dinámico si es necesario)
+        let diasDeCobertura = 21;
+
+        document.querySelectorAll("tbody tr").forEach(function (row, idx) {
+            // Verifica que los selectores coincidan con los nombres y clases en el HTML
+            let conteoFisico = parseInt(row.querySelector("input[name^='conteo_fisico']").value) || 0;
+            let porVencer = parseInt(row.querySelector("input[name^='por_vencer']").value) || 0;
+            let devolucion = parseInt(row.querySelector("input[name^='devolucion']").value) || 0;
+            let canje = parseInt(row.querySelector("input[name^='canje']").value) || 0;
+            let inventarioAMPM = parseInt(row.querySelector("input[name^='inventario_ampm']").value) || 0;
+            let minimoDisplay = parseInt(row.querySelector("input[name^='minimo_display']").value) || 0;
+            let inventarioInicial = parseInt(row.querySelector("input[name^='inventario_inicial']").value) || 0;
+
+            // Acceder al elemento <p> por su atributo name
+            let diasEntreVisitasElement = document.querySelector("p[name='dvisitas']");
+
+            // Extraer solo el número usando una expresión regular
+            let diasEntreVisitas = diasEntreVisitasElement ? parseInt(diasEntreVisitasElement.textContent.match(/\d+/)[0]) || 0 : 0;
+
+            // Calcular ajuste
+            let ajuste = conteoFisico + porVencer + devolucion + canje - inventarioAMPM;
+            let ajusteInput = row.querySelector("input[name^='ajuste']");
+            if (ajusteInput) {
+                ajusteInput.value = ajuste;
+            }
+
+            // Calcular venta (inventario_inicial - conteo_fisico - por_vencer - canje - devolucion)
+            let venta = inventarioInicial - conteoFisico - porVencer - canje - devolucion;
+
+            // Calcular promedio diario de ventas
+            let promedioDiarioVenta = (diasEntreVisitas > 0) ? venta / diasEntreVisitas : 0;
+
+            // Calcular venta estimada (recomendado por Magnolias)
+            let ventaEstimada = promedioDiarioVenta * diasDeCobertura;
+            let vari = Math.max(ventaEstimada, minimoDisplay) - conteoFisico - porVencer;
+            let cantidadEntregar = Math.max(vari + Math.round(porVencer * 0.5), Math.round(porVencer * 0.5));
+            let recomendadoMagnolia = vari;
+            
+            let recomendadoInput = row.querySelector("input[name^='recomendado_M']");
+            if (recomendadoInput) {
+                recomendadoInput.value = Math.round(recomendadoMagnolia);
+            }
+
+            // Calcular entregado real (entrega_final)
+            let entregadoRealInput = row.querySelector("input[name^='entregado_real']");
+            if (entregadoRealInput) {
+                entregadoRealInput.value = Math.round(cantidadEntregar);
+            }
+        });
+
+        // Actualizar los totales de venta y devolución
+        let t = 0;
+        let d = 0;
+
+        // Obtener todos los inputs de devolución y entregado real en la tabla
+        var devolucionInputs = document.querySelectorAll("input[name^='devolucion_']");
+        var entregadoInputs = document.querySelectorAll("input[name^='entregado_real_']");
+        var precios = JSON.parse('{{ precios_productos|escapejs }}');  // Lista de precios con IVA desde Django
+
+        // Verificar que las longitudes coincidan y realizar las operaciones
+        if (devolucionInputs.length === precios.length && entregadoInputs.length === precios.length) {
+            for (let i = 0; i < precios.length; i++) {
+                let devolucion = parseFloat(devolucionInputs[i].value) || 0;
+                let entregado = parseFloat(entregadoInputs[i].value) || 0;
+
+                t += entregado * precios[i];  // Multiplicar cada valor de entregado por el precio correspondiente
+                d += devolucion * precios[i];  // Multiplicar cada valor de devolución por el precio correspondiente
+            }
+        } else {
+            console.error("Las listas de precios y los inputs de devolución/entregado no tienen la misma longitud.");
+        }
+
+        // Actualizar los valores en los elementos HTML
+        document.getElementById("venta_total").value = t.toFixed(2);
+        document.getElementById("devolucion_total").value = d.toFixed(2);
+    }
+
+    // Actualizar los totales de venta y devolución
+        let t = 0;
+        let d = 0;
+
+        // Obtener todos los inputs de devolución y entregado real en la tabla
+        var devolucionInputs = document.querySelectorAll("input[name^='devolucion_']");
+        var entregadoInputs = document.querySelectorAll("input[name^='entregado_real_']");
+        var precios = JSON.parse('{{ precios_productos|escapejs }}');  // Lista de precios con IVA desde Django
+
+        // Verificar que las longitudes coincidan y realizar las operaciones
+        if (devolucionInputs.length === precios.length && entregadoInputs.length === precios.length) {
+            for (let i = 0; i < precios.length; i++) {
+                let devolucion = parseFloat(devolucionInputs[i].value) || 0;
+                let entregado = parseFloat(entregadoInputs[i].value) || 0;
+
+                t += entregado * precios[i];  // Multiplicar cada valor de entregado por el precio correspondiente
+                d += devolucion * precios[i];  // Multiplicar cada valor de devolución por el precio correspondiente
+            }
+        } else {
+            console.error("Las listas de precios y los inputs de devolución/entregado no tienen la misma longitud.");
+        }
+
+        // Actualizar los valores en los elementos HTML
+        document.getElementById("venta_total").value = t.toFixed(2);
+        document.getElementById("devolucion_total").value = d.toFixed(2);
+
+    // Llamar a la función cuando los valores cambien
+    document.addEventListener("input", calculateFields);
+</script>
+
+
+
 {% endblock %}

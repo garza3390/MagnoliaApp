@@ -1,10 +1,61 @@
-from datetime import timedelta
 import json
 from django.http import Http404
 from django.shortcuts import render, redirect
 from .models import CadenaInformacion, TiendaDetalle, ProductoDetalle, VisitaInventario
 from .forms import CadenaInformacionForm, TiendaDetalleForm, ProductoDetalleForm, VisitaInventarioForm
 from django.utils import timezone
+from django.contrib import messages
+from datetime import datetime
+
+def comprobate(request):
+    print("Comprobando que todas las tiendas estén bien...")
+    visitas = VisitaInventario.objects.all()
+    productos = ProductoDetalle.objects.all()
+    obj = json.dumps([0 for p in productos])
+    proceed = True
+
+    if len(visitas) == 0:
+        messages.warning(request, f'La lista de visitas se encuentra vacía.')
+        proceed = False
+    
+    for v in visitas:
+        if v.registro_bloqueado != "S":
+            proceed = False
+    
+    if proceed:
+        messages.success(request, 'Todos los registros estan bloqueados.')
+        messages.info(request, 'Procediento con el restablecimiento de los datos de las visitas.')
+        try:
+            for v in visitas:
+                v.fecha_visita_anterior = v.fecha_visita_actual
+                v.inventario_inicial = v.inventario_final
+                v.existencia_informe_ampm = obj
+                v.conteo_fisico = obj
+                v.cantidad_por_vencer = obj
+                v.devolucion = obj
+                v.canje = obj
+                v.inventario_sistema_ampm = obj
+                v.ajuste = obj
+                v.promedio_diario_venta = obj
+                v.sugerido_sistema_ampm = obj
+                v.venta_estimada = obj
+                v.minimo_display = obj
+                v.suma_conteo_vencer_venta_estimada = obj
+                v.cantidad_entregar = obj
+                v.por_vencer_50_porciento = obj
+                v.entregado_real = obj
+                v.temporada = obj
+                v.inventario_final = obj
+                v.registro_bloqueado = 'N'
+                v.save()
+
+        except:
+            messages.error(request, f'Hubo un error tratando de restablecer los datos.')
+    else:
+        messages.info(request, f'No todas las tiendas han sido visitadas.')
+        return redirect("seleccionar_tienda")
+
+    return redirect("seleccionar_tienda")
 
 def crear_visita_inventario(request):
     if request.method == 'POST':
@@ -64,112 +115,155 @@ def seleccionar_tienda(request):
         return redirect('registrar_visita_inventario', tienda_id=tienda_id)
     return render(request, 'seleccionar_tienda.html')
 
-
-
 def registrar_visita_inventario(request, tienda_id):
-    semana_actual = "2024-XX"  # Define esto según el formato de tu semana actual
+    cadena_info = CadenaInformacion.objects.first()
+    semana_actual = cadena_info.semana_proceso
     fecha_actual = timezone.now()
 
     try:
         tienda = TiendaDetalle.objects.get(codigo_tienda=tienda_id)
     except TiendaDetalle.DoesNotExist:
-        return redirect("seleccionar_tienda")
+        raise Http404("Tienda no encontrada")
+    
+    productos = ProductoDetalle.objects.all()
+    dias_de_cobertura = cadena_info.dias_de_covertura if cadena_info else 21
 
     # Comprobar si ya existe una visita de inventario para esta tienda y semana
     try:
         visita_existente = VisitaInventario.objects.get(codigo_tienda=tienda, semana=semana_actual)
         primera_vez = False
-        # Descomprimir los valores para mostrar datos retroalimentados en el formulario
-        fecha_visita_anterior = visita_existente.fecha_visita_actual
-        inventario_inicial = json.loads(visita_existente.inventario_final)
+
+        # Asegúrate de que fecha_actual es un objeto datetime sin zona horaria
+        if isinstance(fecha_actual, datetime):
+            fecha_actual = fecha_actual.replace(tzinfo=None)
+
+        
+        fecha_visita_anterior = datetime.combine(visita_existente.fecha_visita_anterior, datetime.min.time())
+
+        inv_inicial = visita_existente.inventario_inicial
+        dias_entre_visitas = (fecha_actual - fecha_visita_anterior).days if fecha_visita_anterior else None
+
+
     except VisitaInventario.DoesNotExist:
+
         primera_vez = True
         fecha_visita_anterior = None
-        inventario_inicial = 0  # Valor inicial si es la primera visita
+        inv_inicial = [0 for p in productos]
+        dias_entre_visitas = None
 
     # Datos iniciales
-    productos = ProductoDetalle.objects.all()
-    cadena_info = CadenaInformacion.objects.first()
-    dias_de_cobertura = cadena_info.dias_de_covertura if cadena_info else 21  # Valor predeterminado
+    
 
     if request.method == 'POST':
-        # Si es la primera vez, recibir todos los datos completos
+        # Obtener datos comunes (primer registro y subsecuentes)
+        existencia_ampm = []
+        conteo = []
+        por_vencer = []
+        devolucion = []
+        canje = []  
+        inventario_ampm = []
+        sugerido_ampm = []
+        minimo_disp = []
+
+        for producto in productos:
+            existencia_ampm.append(int(request.POST.get(f'existencia_ampm_{producto.id}', 0)))
+            conteo.append(int(request.POST.get(f'conteo_fisico_{producto.id}', 0)))
+            por_vencer.append(int(request.POST.get(f'por_vencer_{producto.id}', 0)))
+            devolucion.append(int(request.POST.get(f'devolucion_{producto.id}', 0)))
+            canje.append(int(request.POST.get(f'canje_{producto.id}', 0)))
+            inventario_ampm.append(int(request.POST.get(f'inventario_ampm_{producto.id}', 0)))
+            sugerido_ampm.append(int(request.POST.get(f'sugerido_ampm_{producto.id}', 0)))
+            minimo_disp.append(int(request.POST.get(f'minimo_display_{producto.id}', 0)))
+
+        # Para la primera vez, capturamos todos los campos iniciales
         if primera_vez:
-            existencia_informe = []
-            conteo = []
-            por_vencer = []
-            devolucion = []
-            canje = []
-            inventario_sistema = []
-            minimo_disp = []
+            
 
-            for producto in productos:
-                existencia_informe.append(int(request.POST.get(f'existencia_informe_{producto.id}', 0)))
-                conteo.append(int(request.POST.get(f'conteo_fisico_{producto.id}', 0)))
-                por_vencer.append(int(request.POST.get(f'por_vencer_{producto.id}', 0)))
-                devolucion.append(int(request.POST.get(f'devolucion_{producto.id}', 0)))
-                canje.append(int(request.POST.get(f'canje_{producto.id}', 0)))
-                inventario_sistema.append(int(request.POST.get(f'inventario_sistema_{producto.id}', 0)))
-                minimo_disp.append(int(request.POST.get(f'minimo_display_{producto.id}', 0)))
-
-            # Guardar los valores iniciales como listas comprimidas
+            # Crear un nuevo registro de inventario
             visita = VisitaInventario(
                 semana=semana_actual,
                 codigo_tienda=tienda,
-                fecha_visita_anterior=None,
+                fecha_visita_anterior=fecha_actual,
                 fecha_visita_actual=fecha_actual,
-                dias_entre_visitas=None,
-                inventario_inicial=0,
-                existencia_informe_ampm=json.dumps(existencia_informe),
+                dias_entre_visitas=dias_entre_visitas,
+                inventario_inicial=json.dumps(inv_inicial),
+                existencia_informe_ampm=json.dumps(existencia_ampm),
                 conteo_fisico=json.dumps(conteo),
                 cantidad_por_vencer=json.dumps(por_vencer),
                 devolucion=json.dumps(devolucion),
                 canje=json.dumps(canje),
-                inventario_sistema_ampm=json.dumps(inventario_sistema),
+                inventario_sistema_ampm=json.dumps(inventario_ampm),
+                sugerido_sistema_ampm = json.dumps(sugerido_ampm),
                 minimo_display=json.dumps(minimo_disp),
-                temporada=0,
-                registro_bloqueado='N'
+                temporada=json.dumps([float(p.porcentaje_temporada) for p in productos]),
+                registro_bloqueado = 'S' if request.POST.get('registro_bloqueado') else 'N'
             )
+            visita.save()
+            return redirect('seleccionar_tienda')  # Redirigimos tras guardar
+
         else:
-            # Para visitas subsecuentes, solo se ingresan algunos valores
-            conteo = []
-            por_vencer = []
-            devolucion = []
-            canje = []
-            minimo_disp = []
+            # Actualizar datos de una visita subsecuente
+            visita_existente.semana = semana_actual
+            visita_existente.fecha_visita_actual = fecha_actual
+            visita_existente.dias_entre_visitas = dias_entre_visitas
 
-            for producto in productos:
-                conteo.append(int(request.POST.get(f'conteo_fisico_{producto.id}', 0)))
-                por_vencer.append(int(request.POST.get(f'por_vencer_{producto.id}', 0)))
-                devolucion.append(int(request.POST.get(f'devolucion_{producto.id}', 0)))
-                canje.append(int(request.POST.get(f'canje_{producto.id}', 0)))
-                minimo_disp.append(int(request.POST.get(f'minimo_display_{producto.id}', 0)))
-
-            # Actualizar los valores existentes en la base de datos
             visita_existente.conteo_fisico = json.dumps(conteo)
+            visita_existente.existencia_informe_ampm=json.dumps(existencia_ampm)
             visita_existente.cantidad_por_vencer = json.dumps(por_vencer)
             visita_existente.devolucion = json.dumps(devolucion)
             visita_existente.canje = json.dumps(canje)
+            visita_existente.inventario_sistema_ampm=json.dumps(inventario_ampm)
+            visita_existente.sugerido_sistema_ampm = json.dumps(sugerido_ampm)
             visita_existente.minimo_display = json.dumps(minimo_disp)
-            visita_existente.fecha_visita_anterior = fecha_visita_anterior
-            visita_existente.fecha_visita_actual = fecha_actual
-            visita_existente.dias_entre_visitas = (fecha_actual - fecha_visita_anterior).days if fecha_visita_anterior else None
+            visita_existente.temporada=json.dumps([float(p.porcentaje_temporada) for p in productos])
+    
+            visita_existente.registro_bloqueado = 'S' if request.POST.get('registro_bloqueado') else 'N'
             
             visita_existente.save()
-            return redirect('edit')  # Redirigir tras guardar
-
-        # Guardar los datos en el modelo en el caso de la primera visita
-        if primera_vez:
-            visita.save()
-            return redirect('edit')
-
-    # Renderizar el formulario adecuado según sea la primera vez o no
-    return render(request, 'registrar_visita_inventario.html', {
+            return redirect('seleccionar_tienda')  # Redirigimos tras guardar
+        
+    
+        
+    context  = {
         'tienda': tienda,
         'productos': productos,
-        'fecha_actual': fecha_actual.strftime("%d/%b/%Y"),
+        'fecha_actual': fecha_actual,
         'dias_de_cobertura': dias_de_cobertura,
+        'semana_actual': semana_actual,
         'primera_vez': primera_vez,
         'fecha_visita_anterior': fecha_visita_anterior,
-        'inventario_inicial': inventario_inicial,
-    })
+        'inventario_inicial': inv_inicial,
+        'dias_entre_visitas': dias_entre_visitas
+    }
+    rb = False
+    if visita_existente.registro_bloqueado == "S":
+        rb = True
+    context["rb"] = rb
+
+
+    if not primera_vez:
+        all_data = zip(productos,
+                    json.loads(visita_existente.inventario_inicial),
+                    json.loads(visita_existente.existencia_informe_ampm),
+                    json.loads(visita_existente.conteo_fisico),
+                    json.loads(visita_existente.cantidad_por_vencer),
+                    json.loads(visita_existente.devolucion),
+                    json.loads(visita_existente.canje),
+                    json.loads(visita_existente.ajuste),
+                    json.loads(visita_existente.inventario_sistema_ampm),
+                    json.loads(visita_existente.sugerido_sistema_ampm),
+                    json.loads(visita_existente.minimo_display),
+                    json.loads(visita_existente.cantidad_entregar),
+                    json.loads(visita_existente.entregado_real)
+                                )
+        context['all_data'] = all_data
+        context['final_d'] = json.loads(visita_existente.devolucion)
+        context['final_e'] = json.loads(visita_existente.entregado_real)
+        context['precios_productos'] = [p.valor_con_iva for p in productos]
+        
+
+
+
+
+    # Renderizar el formulario adecuado según sea la primera vez o no
+    return render(request, 'registrar_visita_inventario.html', context)
