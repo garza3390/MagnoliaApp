@@ -223,7 +223,7 @@
         // Obtener todos los inputs de devolución y entregado real en la tabla
         var devolucionInputs = document.querySelectorAll("input[name^='devolucion_']");
         var entregadoInputs = document.querySelectorAll("input[name^='entregado_real_']");
-        var precios = JSON.parse('{{ precios_productos|escapejs }}');  // Lista de precios con IVA desde Django
+        // var precios = JSON.parse('{{ precios_productos|escapejs }}');  // Lista de precios con IVA desde Django
         {% if precios_productos %}
           var precios = JSON.parse('{{ precios_productos|escapejs }}');
         {% else %}
@@ -256,7 +256,7 @@
         // Obtener todos los inputs de devolución y entregado real en la tabla
         var devolucionInputs = document.querySelectorAll("input[name^='devolucion_']");
         var entregadoInputs = document.querySelectorAll("input[name^='entregado_real_']");
-        var precios = JSON.parse('{{ precios_productos|escapejs }}');  // Lista de precios con IVA desde Django
+        //var precios = JSON.parse('{{ precios_productos|escapejs }}');  // Lista de precios con IVA desde Django
         {% if precios_productos %}
           var precios = JSON.parse('{{ precios_productos|escapejs }}');
         {% else %}
