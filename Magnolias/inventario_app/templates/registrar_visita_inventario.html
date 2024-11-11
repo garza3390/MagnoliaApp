@@ -224,6 +224,12 @@
         var devolucionInputs = document.querySelectorAll("input[name^='devolucion_']");
         var entregadoInputs = document.querySelectorAll("input[name^='entregado_real_']");
         var precios = JSON.parse('{{ precios_productos|escapejs }}');  // Lista de precios con IVA desde Django
+        {% if precios_productos %}
+          var precios = JSON.parse('{{ precios_productos|escapejs }}');
+        {% else %}
+          var precios = [1140.0, 1785.0, 2510.0, 730.0, 1295.0];
+          console.log("precios_productos no se pasó correctamente al template");
+        {% endif %}
 
         // Verificar que las longitudes coincidan y realizar las operaciones
         if (devolucionInputs.length === precios.length && entregadoInputs.length === precios.length) {
@@ -251,6 +257,12 @@
         var devolucionInputs = document.querySelectorAll("input[name^='devolucion_']");
         var entregadoInputs = document.querySelectorAll("input[name^='entregado_real_']");
         var precios = JSON.parse('{{ precios_productos|escapejs }}');  // Lista de precios con IVA desde Django
+        {% if precios_productos %}
+          var precios = JSON.parse('{{ precios_productos|escapejs }}');
+        {% else %}
+          var precios = [1140.0, 1785.0, 2510.0, 730.0, 1295.0];
+          console.log("precios_productos no se pasó correctamente al template");
+        {% endif %}
 
         // Verificar que las longitudes coincidan y realizar las operaciones
         if (devolucionInputs.length === precios.length && entregadoInputs.length === precios.length) {

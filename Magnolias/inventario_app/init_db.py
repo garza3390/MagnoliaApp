@@ -1,14 +1,25 @@
 import psycopg2
 from datetime import datetime
 
+ANYWHERE = False
 # Conexión a la base de datos PostgreSQL
-conn = psycopg2.connect(
-    dbname='Magnolias_inv',
-    user='postgres',
-    password='password',
-    host='localhost',
-    port='5432'
-)
+
+if not ANYWHERE:
+    conn = psycopg2.connect(
+        dbname='Magnolias_inv',
+        user='postgres',
+        password='password',
+        host='localhost',
+        port='5432'
+    )
+else:
+    conn = psycopg2.connect(
+        dbname='magnolias_inv',
+        user='super',
+        password='MagnoliasANYwhere1029',
+        host='garza-4162.postgres.pythonanywhere-services.com',
+        port='14162'
+    )
 
 cursor = conn.cursor()
 

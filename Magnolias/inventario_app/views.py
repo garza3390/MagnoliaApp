@@ -156,6 +156,7 @@ def registrar_visita_inventario(request, tienda_id):
 
     if request.method == 'POST':
         # Obtener datos comunes (primer registro y subsecuentes)
+        inv_i = []
         existencia_ampm = []
         conteo = []
         por_vencer = []
@@ -166,6 +167,7 @@ def registrar_visita_inventario(request, tienda_id):
         minimo_disp = []
 
         for producto in productos:
+            inv_i.append(int(request.POST.get(f'inventario_inicial_{producto.id}', 0)))
             existencia_ampm.append(int(request.POST.get(f'existencia_ampm_{producto.id}', 0)))
             conteo.append(int(request.POST.get(f'conteo_fisico_{producto.id}', 0)))
             por_vencer.append(int(request.POST.get(f'por_vencer_{producto.id}', 0)))
@@ -178,6 +180,7 @@ def registrar_visita_inventario(request, tienda_id):
         # Para la primera vez, capturamos todos los campos iniciales
         if primera_vez:
             
+            
 
             # Crear un nuevo registro de inventario
             visita = VisitaInventario(
@@ -186,7 +189,7 @@ def registrar_visita_inventario(request, tienda_id):
                 fecha_visita_anterior=fecha_actual,
                 fecha_visita_actual=fecha_actual,
                 dias_entre_visitas=dias_entre_visitas,
-                inventario_inicial=json.dumps(inv_inicial),
+                inventario_inicial=json.dumps(inv_i),
                 existencia_informe_ampm=json.dumps(existencia_ampm),
                 conteo_fisico=json.dumps(conteo),
                 cantidad_por_vencer=json.dumps(por_vencer),
@@ -236,8 +239,9 @@ def registrar_visita_inventario(request, tienda_id):
         'dias_entre_visitas': dias_entre_visitas
     }
     rb = False
-    if visita_existente.registro_bloqueado == "S":
-        rb = True
+    if not primera_vez:
+        if visita_existente.registro_bloqueado == "S":
+            rb = True
     context["rb"] = rb
 
 
