@@ -24,6 +24,7 @@ SECRET_KEY = 'django-insecure-)z)xxyc8vh^avzs$8ycmaqw-yb8+p1kzaw^&jfend^p$lx9x5!
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
+ANYWHERE = False
 
 ALLOWED_HOSTS = ["127.0.0.1","172.19.144.1","192.168.0.6"]
 
@@ -75,18 +76,31 @@ WSGI_APPLICATION = 'Magnolias.wsgi.application'
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
 # inventario_project/settings.py
-
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'Magnolias_inv',
-        'USER': 'postgres',
-        'PASSWORD': 'password',
-        'HOST': 'localhost',  # O la IP de tu servidor
-        'PORT': '5432',       # Puerto por defecto de PostgreSQL
+if not ANYWHERE:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': 'Magnolias_inv',
+            'USER': 'postgres',
+            'PASSWORD': 'password',
+            'HOST': 'localhost',  # O la IP de tu servidor
+            'PORT': '5432',       # Puerto por defecto de PostgreSQL
+        }
     }
-}
 
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': 'magnolias_inv',
+            'USER': 'super',
+            'PASSWORD': 'MagnoliasANYwhere1029',
+            'HOST': 'garza-4162.postgres.pythonanywhere-services.com',  # O la IP de tu servidor
+            'PORT': '14162',       # Puerto por defecto de PostgreSQL
+        }
+    }
+
+# MagnoliasANYwhere1029
 
 
 # Password validation

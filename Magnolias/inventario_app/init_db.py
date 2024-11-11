@@ -128,6 +128,25 @@ for tienda in datos_tiendas:
         tienda[0], tienda[1], tienda[2], tienda[3], tienda[4],
         tienda[5], datetime.strptime(tienda[6], '%Y-%m-%d')
     ))
+# Lista completa de productos a insertar
+datos_productos = [
+    ('007-9', 'GALLETA PARA COLOREAR', '7443023470079', 1008.85, 131.15, 1140, 10.00, 0.00),
+    ('014-7', 'CAJA CON GALLETAS', '7443023470147', 1579.65, 205.35, 1785, 10.00, 0.00),
+    ('021-5', 'KIT CON CALLETAS PARA DECORAR', '7443023470215', 2221.24, 288.76, 2510, 10.00, 0.00),
+    ('022-2', 'GALLETA DECORADA', '7443023470222', 646.02, 83.98, 730, 10.00, 0.00),
+    ('032-1', 'BROWNIES CAJA 2 UNIDADES', '7443023470321', 1146.02, 148.98, 1295, 10.00, 0.00)
+]
+
+# Insertar datos en la tabla producto_detalle
+for producto in datos_productos:
+    cursor.execute('''
+        INSERT INTO producto_detalle (
+            codigo_producto, nombre_producto, codigo_barras, valor_sin_iva, iva, valor_con_iva,
+            porcentaje_merma, porcentaje_temporada
+        )
+        VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
+    ''', producto)
+
 
 # Confirmar la transacción
 conn.commit()
