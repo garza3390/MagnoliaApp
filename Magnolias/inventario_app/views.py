@@ -14,6 +14,7 @@ def comprobate(request):
     productos = ProductoDetalle.objects.all()
     obj = json.dumps([0 for p in productos])
     proceed = True
+    not_visited = []
 
     if len(visitas) == 0:
         messages.warning(request, f'La lista de visitas se encuentra vacía.')
@@ -22,6 +23,8 @@ def comprobate(request):
     for v in visitas:
         if v.registro_bloqueado != "S":
             proceed = False
+        else:
+            not_visited.append(f'{v.co_tienda}:{v.codigo_tienda.nombre_tienda}\n')
     
     if proceed:
         messages.success(request, 'Todos los registros estan bloqueados.')
@@ -54,6 +57,11 @@ def comprobate(request):
             messages.error(request, f'Hubo un error tratando de restablecer los datos.')
     else:
         messages.info(request, f'No todas las tiendas han sido visitadas.')
+        all_tiendas_message = "Tiedas que no han sido visitadas:\n"
+        for m in not_visited:
+            all_tiendas_message += m
+        messages.warning(request, all_tiendas_message)
+        
         return redirect("seleccionar_tienda")
 
     return redirect("seleccionar_tienda")
