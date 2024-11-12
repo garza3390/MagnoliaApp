@@ -1,15 +1,15 @@
 import json
 from django.db import models
 from datetime import timedelta
-from datetime import date
+from django.utils import timezone
 
 class CadenaInformacion(models.Model):
     nombre_cadena = models.CharField(max_length=50, default='Inversiones AMPM S.A.')
     cedula_juridica = models.CharField(max_length=12, default='3-102-811609')
     semana_proceso = models.CharField(max_length=9,default='2000-43')
     dia_proxima_visita = models.DateField(null=True, blank=True,default='2000-10-10')
-    rango_fecha_inicio = models.DateField(default=date.today)
-    rango_fecha_fin = models.DateField(default=date.today)
+    rango_fecha_inicio = models.DateField(default=timezone.now().strftime('%Y-%m-%d'))
+    rango_fecha_fin = models.DateField(default=timezone.now().strftime('%Y-%m-%d'))
     dias_de_covertura = models.IntegerField(null=True, default=21)
 
     def __str__(self):
@@ -125,7 +125,7 @@ class VisitaInventario(models.Model):
     codigo_tienda = models.ForeignKey(TiendaDetalle, on_delete=models.CASCADE)  # u Ingresado por el usuario
     co_tienda = models.CharField(max_length=3,default="000")
     fecha_visita_anterior = models.DateField(null=True, blank=True)  # r Retroalimentado de la visita actual previa
-    fecha_visita_actual = models.DateField(null=True, blank=True)  # c Fecha actual
+    fecha_visita_actual = models.DateField(null=True, blank=True,default=timezone.now().strftime('%Y-%m-%d'))  # c Fecha actual
     dias_entre_visitas = models.IntegerField(null=True, blank=True)  # c Diferencia de días entre visitas
     inventario_inicial = models.TextField(null=True, blank=True)  # r Retroalimentado del inventario final
     existencia_informe_ampm = models.TextField()  # u Lista: Ingresada por el usuario

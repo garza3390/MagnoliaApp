@@ -29,7 +29,7 @@ def comprobate(request):
     
     if proceed:
         messages.success(request, 'Todos los registros estan bloqueados.')
-        messages.info(request, 'Procediento con el restablecimiento de los datos de las visitas.')
+        messages.info(request, 'Procediendo con el restablecimiento de los datos de las visitas.')
         try:
             for v in visitas:
                 v.fecha_visita_anterior = v.fecha_visita_actual
