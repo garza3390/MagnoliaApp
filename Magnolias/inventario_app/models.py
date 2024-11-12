@@ -162,6 +162,7 @@ class VisitaInventario(models.Model):
         if isinstance(self.codigo_tienda,TiendaDetalle):
             self.c_tienda = self.codigo_tienda.codigo_tienda
         
+        
         # Extraer el valor de días de cobertura desde la tabla CadenaInformacion
         cadena_info = CadenaInformacion.objects.first()
         dias_de_cobertura = int(cadena_info.dias_de_covertura) if cadena_info else 21  # Usa 21 si no hay valor
