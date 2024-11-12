@@ -21,10 +21,11 @@ def comprobate(request):
         proceed = False
     
     for v in visitas:
+
         if v.registro_bloqueado != "S":
-            proceed = False
-        else:
             not_visited.append(f'{v.co_tienda}:{v.codigo_tienda.nombre_tienda}\n')
+            proceed = False
+            
     
     if proceed:
         messages.success(request, 'Todos los registros estan bloqueados.')
