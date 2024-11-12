@@ -163,8 +163,6 @@
 <a href="{% url 'seleccionar_tienda' %}" class="btn btn-secondary btn-block mt-2">Volver al Inicio</a>
 
 <script>
-
-
     function calculateFields() {
         // Extraer días de cobertura (puedes ajustar este valor o hacerlo dinámico si es necesario)
         let diasDeCobertura = 21;
@@ -203,16 +201,17 @@
             let vari = Math.max(ventaEstimada, minimoDisplay) - conteoFisico - porVencer;
             let cantidadEntregar = Math.max(vari + Math.round(porVencer * 0.5), Math.round(porVencer * 0.5));
             let recomendadoMagnolia = vari;
-            
+
             let recomendadoInput = row.querySelector("input[name^='recomendado_M']");
             if (recomendadoInput) {
                 recomendadoInput.value = Math.round(recomendadoMagnolia);
             }
 
-            // Calcular entregado real (entrega_final)
+            // Calcular entregado real solo si no se ha calculado previamente
             let entregadoRealInput = row.querySelector("input[name^='entregado_real']");
-            if (entregadoRealInput) {
+            if (entregadoRealInput && !entregadoRealInput.dataset.calculado) {
                 entregadoRealInput.value = Math.round(cantidadEntregar);
+                entregadoRealInput.dataset.calculado = true;  // Marcar como calculado
             }
         });
 
@@ -223,7 +222,6 @@
         // Obtener todos los inputs de devolución y entregado real en la tabla
         var devolucionInputs = document.querySelectorAll("input[name^='devolucion_']");
         var entregadoInputs = document.querySelectorAll("input[name^='entregado_real_']");
-        // var precios = JSON.parse('{{ precios_productos|escapejs }}');  // Lista de precios con IVA desde Django
         {% if precios_productos %}
           var precios = JSON.parse('{{ precios_productos|safe|escapejs }}');
         {% else %}
@@ -249,41 +247,10 @@
         document.getElementById("devolucion_total").value = d.toFixed(2);
     }
 
-    // Actualizar los totales de venta y devolución
-        let t = 0;
-        let d = 0;
-
-        // Obtener todos los inputs de devolución y entregado real en la tabla
-        var devolucionInputs = document.querySelectorAll("input[name^='devolucion_']");
-        var entregadoInputs = document.querySelectorAll("input[name^='entregado_real_']");
-        //var precios = JSON.parse('{{ precios_productos|escapejs }}');  // Lista de precios con IVA desde Django
-        {% if precios_productos %}
-          var precios = JSON.parse('{{ precios_productos|safe|escapejs }}');
-        {% else %}
-          var precios = [1140.0, 1785.0, 2510.0, 730.0, 1295.0];
-          console.log("precios_productos no se pasó correctamente al template");
-        {% endif %}
-
-        // Verificar que las longitudes coincidan y realizar las operaciones
-        if (devolucionInputs.length === precios.length && entregadoInputs.length === precios.length) {
-            for (let i = 0; i < precios.length; i++) {
-                let devolucion = parseFloat(devolucionInputs[i].value) || 0;
-                let entregado = parseFloat(entregadoInputs[i].value) || 0;
-
-                t += entregado * precios[i];  // Multiplicar cada valor de entregado por el precio correspondiente
-                d += devolucion * precios[i];  // Multiplicar cada valor de devolución por el precio correspondiente
-            }
-        } else {
-            console.error("Las listas de precios y los inputs de devolución/entregado no tienen la misma longitud.");
-        }
-
-        // Actualizar los valores en los elementos HTML
-        document.getElementById("venta_total").value = t.toFixed(2);
-        document.getElementById("devolucion_total").value = d.toFixed(2);
-
     // Llamar a la función cuando los valores cambien
     document.addEventListener("input", calculateFields);
 </script>
+
 
 
 
