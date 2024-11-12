@@ -122,7 +122,8 @@ class ProductoDetalle(models.Model):
 
 class VisitaInventario(models.Model):
     semana = models.CharField(max_length=9)  # m Se obtiene de CadenaInformacion
-    codigo_tienda = models.ForeignKey(TiendaDetalle, on_delete=models.CASCADE,to_field='codigo_tienda',db_column='codigo_tienda')  # u Ingresado por el usuario
+    codigo_tienda = models.ForeignKey(TiendaDetalle, on_delete=models.CASCADE)  # u Ingresado por el usuario
+    c_tienda = models.CharField(max_length=3,default="000")
     fecha_visita_anterior = models.DateField(null=True, blank=True)  # r Retroalimentado de la visita actual previa
     fecha_visita_actual = models.DateField(null=True, blank=True)  # c Fecha actual
     dias_entre_visitas = models.IntegerField(null=True, blank=True)  # c Diferencia de días entre visitas
@@ -157,6 +158,9 @@ class VisitaInventario(models.Model):
     # inventario_final * mostrar en la vista con js
 
     def save(self, *args, **kwargs):
+
+        if isinstance(self.codigo_tienda,TiendaDetalle):
+            self.c_tienda = self.codigo_tienda.codigo_tienda
         
         # Extraer el valor de días de cobertura desde la tabla CadenaInformacion
         cadena_info = CadenaInformacion.objects.first()
