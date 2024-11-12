@@ -148,11 +148,13 @@ def registrar_visita_inventario(request, tienda_id):
         visita_existente = VisitaInventario.objects.get(codigo_tienda=tienda, semana=semana_actual)
         primera_vez = False
 
+       
         
         fecha_visita_anterior = datetime.combine(visita_existente.fecha_visita_anterior, datetime.min.time())
 
         inv_inicial = visita_existente.inventario_inicial
-        dias_entre_visitas = (fecha_actual - fecha_visita_anterior).days if fecha_visita_anterior else None
+
+        dias_entre_visitas = (fecha_actual.date() - fecha_visita_anterior.date()).days if fecha_visita_anterior else None
 
 
     except VisitaInventario.DoesNotExist:
