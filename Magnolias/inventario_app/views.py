@@ -186,7 +186,7 @@ def registrar_visita_inventario(request, tienda_id):
             visita = VisitaInventario(
                 semana=semana_actual,
                 codigo_tienda=tienda,
-                fecha_visita_anterior=fecha_actual,
+                fecha_visita_anterior=tienda.fecha_ultima_visita,
                 fecha_visita_actual=fecha_actual,
                 dias_entre_visitas=dias_entre_visitas,
                 inventario_inicial=json.dumps(inv_i),
