@@ -7,6 +7,7 @@ from django.utils import timezone
 from django.contrib import messages
 from datetime import datetime
 
+
 def comprobate(request):
     print("Comprobando que todas las tiendas estén bien...")
     visitas = VisitaInventario.objects.all()
@@ -110,10 +111,15 @@ def editar_cadena_informacion(request):
     return render(request, 'editar_cadena_informacion.html', {'form': form})
 
 def seleccionar_tienda(request):
+
+    contexto = {
+        'fecha_actual': timezone.now(),
+    }
+    
     if request.method == 'POST':
         tienda_id = request.POST.get('tienda_id')
         return redirect('registrar_visita_inventario', tienda_id=tienda_id)
-    return render(request, 'seleccionar_tienda.html')
+    return render(request, 'seleccionar_tienda.html',contexto)
 
 def registrar_visita_inventario(request, tienda_id):
     cadena_info = CadenaInformacion.objects.first()

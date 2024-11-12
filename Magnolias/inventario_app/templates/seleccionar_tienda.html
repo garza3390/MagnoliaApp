@@ -3,6 +3,8 @@
 {% block title %}Seleccionar Tienda{% endblock %}
 {% block content %}
 <h2>Selecciona una Tienda</h2>
+<p>Fecha actual: {{ fecha_actual|date:"d/m/Y" }}</p> <!-- Muestra la fecha actual -->
+
 <form method="post">
     {% csrf_token %}
     <label for="tienda_id">ID de Tienda:</label>
@@ -13,6 +15,5 @@
 <a href="{% url 'edit' %}" class="btn btn-primary btn-block my-2">Editar Información</a>
 <a href="{% url 'comprobate' %}" class="btn btn-primary btn-block my-2">Revision de tiendas</a>
 {% endblock %}
-
 
 <h1>Hola</h1>
