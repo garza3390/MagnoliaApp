@@ -148,10 +148,6 @@ def registrar_visita_inventario(request, tienda_id):
         visita_existente = VisitaInventario.objects.get(codigo_tienda=tienda, semana=semana_actual)
         primera_vez = False
 
-        # Asegúrate de que fecha_actual es un objeto datetime sin zona horaria
-        if isinstance(fecha_actual, datetime):
-            fecha_actual = fecha_actual.replace(tzinfo=None)
-
         
         fecha_visita_anterior = datetime.combine(visita_existente.fecha_visita_anterior, datetime.min.time())
 
