@@ -8,8 +8,8 @@ class CadenaInformacion(models.Model):
     cedula_juridica = models.CharField(max_length=12, default='3-102-811609')
     semana_proceso = models.CharField(max_length=9,default='2000-43')
     dia_proxima_visita = models.DateField(null=True, blank=True,default='2000-10-10')
-    rango_fecha_inicio = models.DateField(default=date.today,default='2000-10-10')
-    rango_fecha_fin = models.DateField(default=date.today,default='2000-10-10')
+    rango_fecha_inicio = models.DateField(default=date.today)
+    rango_fecha_fin = models.DateField(default=date.today)
     dias_de_covertura = models.IntegerField(null=True, default=21)
 
     def __str__(self):
@@ -30,7 +30,7 @@ class TiendaDetalle(models.Model):
     ruta_secuencial_fija = models.CharField(max_length=3) #
     horario_cierre_bodega = models.CharField(choices=[('11-12', '11-12'), ('12-13', '12-13')]) #
     fecha_ultima_visita = models.DateField(null=True, blank=True) #
-    telefono = models.CharField(max_length=9, default="") 
+    telefono = models.CharField(max_length=9, default="")
     correo = models.EmailField(max_length=50, default="")
     direccion = models.CharField(max_length=600,default="")
 
@@ -61,10 +61,10 @@ class ProductoDetalle(models.Model):
     def save(self, *args, **kwargs):
         # Calcula el IVA si no ha sido proporcionado por el formulario
         self.iva = self.valor_sin_iva * 0.13
-        
+
         # Calcula el valor con IVA y redondea al entero más cercano
         self.valor_con_iva = round(self.valor_sin_iva + self.iva)
-        
+
         super().save(*args, **kwargs)
 
     def __str__(self):
@@ -79,7 +79,7 @@ class ProductoDetalle(models.Model):
 
 
 # class VisitaInventario(models.Model):
-    
+
 #     semana = models.CharField(max_length=9) #  Se mantiene: se obtiene de la tabla CadenaInformacion
 #     codigo_tienda = models.ForeignKey(TiendaDetalle, on_delete=models.CASCADE) # se mantiene: Se ingresa por el usuario
 #     fecha_visita_anterior = models.DateField(null=True, blank=True) # se mantiene: Se retroalimenta de la actual en la segunda pasada, en la primera esta en blanco
@@ -104,10 +104,10 @@ class ProductoDetalle(models.Model):
 #     entregado_real = models.IntegerField() # if cantidad_entregar > 0: cantidad_entregar + por_vencer_50_porciento else: por_vencer_50_porciento, esta se convierte en textfield para almacenar la lista
 #     temporada = models.IntegerField() # Proviene de los porcentaje_temporada de productos, se convierte en textfield para almacenar la lista
 #     inventario_final = models.IntegerField(null=True, blank=True) # Es la suma de: Conteo fisico + Por vencer + Canje directo + cantidad_a_entregar + porcentaje_temporada , esta se convierte en textfield para almacenar la lista
-#     registro_bloqueado = models.CharField(max_length=1, choices=[('S', 'Sí'), ('N', 'No')], default='N') # Ingresado por el usuario 
+#     registro_bloqueado = models.CharField(max_length=1, choices=[('S', 'Sí'), ('N', 'No')], default='N') # Ingresado por el usuario
 
 #     def save(self, *args, **kwargs):
-        
+
 #         super().save(*args, **kwargs)
 
 #     def __str__(self):
@@ -123,7 +123,7 @@ class ProductoDetalle(models.Model):
 class VisitaInventario(models.Model):
     semana = models.CharField(max_length=9)  # m Se obtiene de CadenaInformacion
     codigo_tienda = models.ForeignKey(TiendaDetalle, on_delete=models.CASCADE)  # u Ingresado por el usuario
-    c_tienda = models.CharField(max_length=3,default="000")
+    co_tienda = models.CharField(max_length=3,default="000")
     fecha_visita_anterior = models.DateField(null=True, blank=True)  # r Retroalimentado de la visita actual previa
     fecha_visita_actual = models.DateField(null=True, blank=True)  # c Fecha actual
     dias_entre_visitas = models.IntegerField(null=True, blank=True)  # c Diferencia de días entre visitas
@@ -160,8 +160,9 @@ class VisitaInventario(models.Model):
     def save(self, *args, **kwargs):
 
         if isinstance(self.codigo_tienda,TiendaDetalle):
-            self.c_tienda = self.codigo_tienda.codigo_tienda
-        
+            self.co_tienda = self.codigo_tienda.codigo_tienda
+            print("codigo tienda" + str(self.co_tienda))
+
 
         # Extraer el valor de días de cobertura desde la tabla CadenaInformacion
         cadena_info = CadenaInformacion.objects.first()
@@ -197,10 +198,10 @@ class VisitaInventario(models.Model):
         for idx in range(len(existencia_informe)):
 
             #  Se calcula como conteo_fisico + cantidad_por_vencer + devolucion + canje - inventario_sistema_ampm
-            
+
             ajuste_val = int(conteo[idx]) + int(por_vencer[idx]) + int(devolucion_nd[idx]) + int(canje[idx]) - int(inventario_sistema[idx])
             ajuste.append(ajuste_val)
-            
+
             # TODO: fix the calculus of total selled
 
             total_val = int(conteo[idx]) + int(por_vencer[idx]) + int(devolucion_nd[idx]) + int(canje[idx]) + int(ajuste_val)
@@ -219,14 +220,14 @@ class VisitaInventario(models.Model):
             suma_conteo_venta_val = round(int(conteo[idx]) + int(por_vencer[idx]) + venta_estim)
             suma_conteo_venta.append(suma_conteo_venta_val)
 
-            
+
             cantidad_entregar_val = 0
 
             if venta_estim > int(minimo_disp[idx]):
                 cantidad_entregar_val = venta_estim - int(conteo[idx]) - int(por_vencer[idx])
             else:
                 cantidad_entregar_val = int(minimo_disp[idx]) - int(conteo[idx]) - int(por_vencer[idx])
-                
+
             cantidad_entregar.append(cantidad_entregar_val)
 
             pv_50 = round(int(por_vencer[idx]) * 0.5)
@@ -239,7 +240,7 @@ class VisitaInventario(models.Model):
                 entregado_real_val = cantidad_entregar_val + pv_50
             else:
                 entregado_real_val = pv_50
-                
+
             entregado_real.append(entregado_real_val)
 
             inventario_final_val = int(conteo[idx]) + int(por_vencer[idx]) + int(canje[idx]) + int(entregado_real_val) + float(json.loads(self.temporada)[idx])
@@ -255,7 +256,7 @@ class VisitaInventario(models.Model):
         self.entregado_real = json.dumps(entregado_real)
         self.inventario_final = json.dumps(inventario_final)
         self.venta_real = json.dumps(venta)
-        
+
 
         # Llamar al método save original
         super().save(*args, **kwargs)
