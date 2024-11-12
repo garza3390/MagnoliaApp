@@ -6,10 +6,10 @@ from datetime import date
 class CadenaInformacion(models.Model):
     nombre_cadena = models.CharField(max_length=50, default='Inversiones AMPM S.A.')
     cedula_juridica = models.CharField(max_length=12, default='3-102-811609')
-    semana_proceso = models.CharField(max_length=9)
-    dia_proxima_visita = models.DateField(null=True, blank=True)
-    rango_fecha_inicio = models.DateField(default=date.today)
-    rango_fecha_fin = models.DateField(default=date.today)
+    semana_proceso = models.CharField(max_length=9,default='2000-43')
+    dia_proxima_visita = models.DateField(null=True, blank=True,default='2000-10-10')
+    rango_fecha_inicio = models.DateField(default=date.today,default='2000-10-10')
+    rango_fecha_fin = models.DateField(default=date.today,default='2000-10-10')
     dias_de_covertura = models.IntegerField(null=True, default=21)
 
     def __str__(self):
@@ -162,7 +162,7 @@ class VisitaInventario(models.Model):
         if isinstance(self.codigo_tienda,TiendaDetalle):
             self.c_tienda = self.codigo_tienda.codigo_tienda
         
-        
+
         # Extraer el valor de días de cobertura desde la tabla CadenaInformacion
         cadena_info = CadenaInformacion.objects.first()
         dias_de_cobertura = int(cadena_info.dias_de_covertura) if cadena_info else 21  # Usa 21 si no hay valor
