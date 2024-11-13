@@ -14,7 +14,7 @@ def cargar_inventarios():
         cadena_semana = cadena.semana_proceso
     except:
         print("Aun no hay cadena de informacion")
-    f_path = dir = os.path.join(os.getcwd(),"inventario_app","data","inv_final.txt")
+    f_path = os.path.join(os.getcwd(),"inventario_app","data","inv_final.txt")
     # Leer los datos del archivo inv_final.txt y dividirlos en grupos de 5
     with open(f_path, 'r') as file:
         data = file.read().splitlines()
