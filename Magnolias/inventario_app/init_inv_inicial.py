@@ -1,8 +1,8 @@
 import os
 from django.utils import timezone
 from datetime import datetime
-
-from inventario_app.models import TiendaDetalle, VisitaInventario,CadenaInformacion
+import json
+from inventario_app.models import TiendaDetalle, VisitaInventario,CadenaInformacion,ProductoDetalle
 
 def cargar_inventarios():
 
@@ -32,6 +32,8 @@ def cargar_inventarios():
     # Verifica si el número de grupos de datos coincide con el número de tiendas
     if len(tiendas) != len(datos_por_grupo):
         raise ValueError("El número de tiendas no coincide con el número de grupos de datos.")
+    
+    productos = ProductoDetalle.objects.all()
 
     # Crear inventarios para cada tienda
     for idx, tienda in enumerate(tiendas):
@@ -43,6 +45,8 @@ def cargar_inventarios():
 
         d_e_visitas = (f_actual.date() - f_anterior.date()).days if f_anterior else None
 
+        obj  = json.dumps([0 for p in productos])
+
         nuevo_inventario = VisitaInventario.objects.create(
 
             semana=cadena_semana,  # Campo por defecto
@@ -52,24 +56,24 @@ def cargar_inventarios():
             fecha_visita_actual=f_actual,  # Puedes modificar esto si necesitas la fecha actual
             dias_entre_visitas=d_e_visitas,
             inventario_inicial=inventario_inicial_str,
-            existencia_informe_ampm="[]",
-            conteo_fisico="[]",
-            cantidad_por_vencer="[]",
-            devolucion="[]",
-            canje="[]",
-            inventario_sistema_ampm="[]",
-            ajuste="[]",
-            venta_real = "[]",
-            promedio_diario_venta="[]",
-            sugerido_sistema_ampm="[]",
-            venta_estimada="[]",
-            minimo_display="[]",
-            suma_conteo_vencer_venta_estimada="[]",
-            cantidad_entregar="[]",
-            por_vencer_50_porciento="[]",
-            entregado_real="[]",
-            temporada="[]",
-            inventario_final="[]",
+            existencia_informe_ampm=obj,
+            conteo_fisico=obj,
+            cantidad_por_vencer=obj,
+            devolucion=obj,
+            canje=obj,
+            inventario_sistema_ampm=obj,
+            ajuste=obj,
+            venta_real = obj,
+            promedio_diario_venta=obj,
+            sugerido_sistema_ampm=obj,
+            venta_estimada=obj,
+            minimo_display=obj,
+            suma_conteo_vencer_venta_estimada=obj,
+            cantidad_entregar=obj,
+            por_vencer_50_porciento=obj,
+            entregado_real=obj,
+            temporada=obj,
+            inventario_final=obj,
             registro_bloqueado='N'
         )
 
