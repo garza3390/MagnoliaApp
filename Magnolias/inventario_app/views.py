@@ -138,6 +138,7 @@ def registrar_visita_inventario(request, tienda_id):
     try:
         tienda = TiendaDetalle.objects.get(codigo_tienda=tienda_id)
     except TiendaDetalle.DoesNotExist:
+        messages.info(request, f'Tienda no encontrada')
         raise Http404("Tienda no encontrada")
     
     productos = ProductoDetalle.objects.all()
@@ -165,7 +166,9 @@ def registrar_visita_inventario(request, tienda_id):
         dias_entre_visitas = None
 
     # Datos iniciales
+
     
+    messages.info(request, f'Primera vez: {primera_vez}')
 
     if request.method == 'POST':
         # Obtener datos comunes (primer registro y subsecuentes)
