@@ -1,10 +1,10 @@
 import os
 from datetime import datetime
 
-from inventario_app.models import VisitaInventario
+from inventario_app.models import VisitaInventario,ProductoDetalle
 
 
-def update_inventarios():
+def update_inventarios_d():
     # Leer las fechas del archivo ultima_visita.txt
     f_path = os.path.join(os.getcwd(), "inventario_app", "data", "ultima_visita.txt")
     with open(f_path, 'r') as file:

@@ -145,7 +145,7 @@ def registrar_visita_inventario(request, tienda_id):
 
     # Comprobar si ya existe una visita de inventario para esta tienda y semana
     try:
-        visita_existente = VisitaInventario.objects.get(codigo_tienda=tienda, semana=semana_actual)
+        visita_existente = VisitaInventario.objects.get(co_tienda=tienda_id, semana=semana_actual)
         primera_vez = False
 
        
