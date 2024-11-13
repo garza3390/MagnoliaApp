@@ -121,7 +121,7 @@ class ProductoDetalle(models.Model):
 
 
 class VisitaInventario(models.Model):
-    semana = models.CharField(max_length=9)  # m Se obtiene de CadenaInformacion
+    semana = models.CharField(max_length=9,default="")  # m Se obtiene de CadenaInformacion
     codigo_tienda = models.ForeignKey(TiendaDetalle, on_delete=models.CASCADE)  # u Ingresado por el usuario
     co_tienda = models.CharField(max_length=3,default="000")
     fecha_visita_anterior = models.DateField(null=True, blank=True)  # r Retroalimentado de la visita actual previa
