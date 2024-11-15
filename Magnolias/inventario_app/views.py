@@ -125,6 +125,7 @@ from django.utils import timezone
 def seleccionar_tienda(request):
     contexto = {
         'fecha_actual': timezone.now(),
+        'version': '1.0.5'
     }
     
     if request.method == 'POST':
@@ -163,7 +164,7 @@ def registrar_visita_inventario(request, tienda_id):
 
         inv_inicial = visita_existente.inventario_inicial
 
-        dias_entre_visitas = (proxima_visita.date() - fecha_visita_anterior.date()).days if fecha_visita_anterior else None
+        dias_entre_visitas = (proxima_visita - fecha_visita_anterior.date()).days if fecha_visita_anterior else None
 
 
     except VisitaInventario.DoesNotExist:

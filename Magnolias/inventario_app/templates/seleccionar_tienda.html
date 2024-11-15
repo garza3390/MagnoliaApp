@@ -87,6 +87,13 @@
             font-size: 14px;
         }
     }
+
+    .version-info {
+        font-size: 12px;
+        color: #6c757d;
+        text-align: center;
+        margin-top: 10px;
+    }
 </style>
 
 <h2>Selecciona una Tienda</h2>
@@ -102,6 +109,10 @@
 <div style="max-width: 500px; margin: 20px auto;">
     <a href="{% url 'edit' %}" class="btn btn-primary btn-block my-2">Editar Información</a>
     <a href="{% url 'comprobate' %}" class="btn btn-primary btn-block my-2">Revisión de Tiendas</a>
+</div>
+
+<div class="version-info">
+    Versión del sistema: {{ version }}
 </div>
 {% endblock %}
 

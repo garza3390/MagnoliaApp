@@ -48,7 +48,7 @@ def update_inventarios_d_e_v():
     # Actualizar la fecha de última visita de cada inventario
     for idx, inventario in enumerate(inventarios):
         fecha_visita_anterior = datetime.combine(inventario.fecha_visita_anterior, datetime.min.time())
-        d = (proxima_visita.date() - fecha_visita_anterior.date()).days if fecha_visita_anterior else 1
+        d = (proxima_visita - fecha_visita_anterior.date()).days if fecha_visita_anterior else 1
         # Actualizar el campo en el modelo
         inventario.dias_entre_visitas = d
         inventario.save()
