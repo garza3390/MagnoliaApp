@@ -4,10 +4,74 @@
 {% block header %}Inicio{% endblock %}
 
 {% block content %}
-<div class="text-center">
-    <a href="{% url 'editar_cadena_informacion' %}" class="btn btn-warning btn-block my-2">Editar Información de Cadena</a>
-    <a href="{% url 'agregar_tienda' %}" class="btn btn-primary btn-block my-2">Agregar Tienda</a>
-    <a href="{% url 'agregar_producto' %}" class="btn btn-primary btn-block my-2">Agregar Producto</a>
-    <a href="{% url 'seleccionar_tienda' %}" class="btn btn-secondary btn-block mt-2">Volver al Inicio</a>
+<style>
+    .container-menu {
+        max-width: 600px;
+        margin: 40px auto;
+        padding: 20px;
+        background-color: #f8f9fa;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .btn {
+        display: block;
+        width: 100%;
+        margin-bottom: 15px;
+        font-size: 18px;
+        padding: 10px;
+        text-align: center;
+        border-radius: 8px;
+        text-decoration: none;
+    }
+
+    .btn-warning {
+        background-color: #ffc107;
+        color: #212529;
+        border: none;
+    }
+
+    .btn-warning:hover {
+        background-color: #e0a800;
+    }
+
+    .btn-primary {
+        background-color: #007bff;
+        color: #ffffff;
+        border: none;
+    }
+
+    .btn-primary:hover {
+        background-color: #0056b3;
+    }
+
+    .btn-secondary {
+        background-color: #6c757d;
+        color: #ffffff;
+        border: none;
+    }
+
+    .btn-secondary:hover {
+        background-color: #5a6268;
+    }
+
+    @media (max-width: 600px) {
+        .btn {
+            font-size: 16px;
+            padding: 8px;
+        }
+
+        .container-menu {
+            padding: 15px;
+            margin: 20px auto;
+        }
+    }
+</style>
+
+<div class="container-menu text-center">
+    <a href="{% url 'editar_cadena_informacion' %}" class="btn btn-warning">Editar Información de Cadena</a>
+    <a href="{% url 'agregar_tienda' %}" class="btn btn-primary">Agregar Tienda</a>
+    <a href="{% url 'agregar_producto' %}" class="btn btn-primary">Agregar Producto</a>
+    <a href="{% url 'seleccionar_tienda' %}" class="btn btn-secondary">Volver al Inicio</a>
 </div>
 {% endblock %}

@@ -1,19 +1,118 @@
 {% extends "base.html" %}
 
 {% block title %}Seleccionar Tienda{% endblock %}
+
 {% block content %}
+<style>
+    body {
+        font-family: 'Arial', sans-serif;
+        background-color: #f8f9fa;
+        margin: 0;
+        padding: 0;
+    }
+
+    h2 {
+        text-align: center;
+        color: #343a40;
+        margin-top: 20px;
+    }
+
+    form {
+        max-width: 500px;
+        margin: 20px auto;
+        padding: 15px;
+        background-color: #ffffff;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    label {
+        display: block;
+        margin-bottom: 8px;
+        color: #495057;
+    }
+
+    input[type="text"] {
+        width: 100%;
+        padding: 10px;
+        margin-bottom: 15px;
+        border: 1px solid #ced4da;
+        border-radius: 5px;
+        box-sizing: border-box;
+        font-size: 16px;
+    }
+
+    button {
+        width: 100%;
+        padding: 10px;
+        background-color: #007bff;
+        border: none;
+        border-radius: 5px;
+        color: #ffffff;
+        font-size: 16px;
+        cursor: pointer;
+    }
+
+    button:hover {
+        background-color: #0056b3;
+    }
+
+    .btn-block {
+        display: block;
+        width: 100%;
+        margin-bottom: 10px;
+        text-align: center;
+    }
+
+    .my-2 {
+        margin-top: 10px;
+        margin-bottom: 10px;
+    }
+
+    p {
+        text-align: center;
+        color: #6c757d;
+    }
+
+    @media (max-width: 600px) {
+        h2 {
+            font-size: 20px;
+        }
+
+        form {
+            margin: 15px auto;
+        }
+
+        input[type="text"], button {
+            font-size: 14px;
+        }
+    }
+</style>
+
 <h2>Selecciona una Tienda</h2>
-<p>Fecha actual: {{ fecha_actual|date:"d/m/Y" }}</p> <!-- Muestra la fecha actual -->
+<p>Fecha actual: {{ fecha_actual|date:"d/m/Y" }}</p>
 
 <form method="post">
     {% csrf_token %}
     <label for="tienda_id">ID de Tienda:</label>
-    <input type="text" name="tienda_id" id="tienda_id" required>
+    <input type="text" name="tienda_id" id="tienda_id" placeholder="Ingrese el ID de la tienda" required>
     <button type="submit" class="btn btn-primary">Continuar</button>
 </form>
 
-<a href="{% url 'edit' %}" class="btn btn-primary btn-block my-2">Editar Información</a>
-<a href="{% url 'comprobate' %}" class="btn btn-primary btn-block my-2">Revision de tiendas</a>
+<div style="max-width: 500px; margin: 20px auto;">
+    <a href="{% url 'edit' %}" class="btn btn-primary btn-block my-2">Editar Información</a>
+    <a href="{% url 'comprobate' %}" class="btn btn-primary btn-block my-2">Revisión de Tiendas</a>
+</div>
 {% endblock %}
 
-<h1>Hola</h1>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const input = document.getElementById('tienda_id');
+        input.addEventListener('focus', () => {
+            input.style.borderColor = '#007bff';
+        });
+        input.addEventListener('blur', () => {
+            input.style.borderColor = '#ced4da';
+        });
+    });
+</script>

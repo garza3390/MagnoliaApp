@@ -10,6 +10,9 @@ class TiendaDetalleForm(forms.ModelForm):
     class Meta:
         model = TiendaDetalle
         fields = '__all__'
+    def clean_codigo_tienda(self):
+        codigo = self.cleaned_data['codigo_tienda']
+        return codigo.zfill(3)
 
 class ProductoDetalleForm(forms.ModelForm):
     class Meta:

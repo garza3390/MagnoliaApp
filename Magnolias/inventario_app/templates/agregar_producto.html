@@ -4,7 +4,93 @@
 {% block header %}Agregar Producto{% endblock %}
 
 {% block content %}
-<div class="container">
+<style>
+    .form-container {
+        max-width: 600px;
+        margin: 40px auto;
+        padding: 20px;
+        background-color: #f9f9f9;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .form-container form {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .form-container .form-group {
+        width: 100%;
+        margin-bottom: 15px;
+    }
+
+    .form-container .form-group label {
+        display: block;
+        margin-bottom: 5px;
+        font-weight: bold;
+    }
+
+    .form-container input,
+    .form-container select {
+        width: 100%;
+        padding: 10px;
+        margin-bottom: 10px;
+        border-radius: 5px;
+        border: 1px solid #ccc;
+        font-size: 16px;
+    }
+
+    .btn {
+        display: block;
+        width: 100%;
+        font-size: 18px;
+        padding: 10px;
+        border-radius: 8px;
+        text-align: center;
+        text-decoration: none;
+        margin-bottom: 15px;
+    }
+
+    .btn-success {
+        background-color: #28a745;
+        color: #ffffff;
+        border: none;
+    }
+
+    .btn-success:hover {
+        background-color: #218838;
+    }
+
+    .btn-secondary {
+        background-color: #6c757d;
+        color: #ffffff;
+        border: none;
+    }
+
+    .btn-secondary:hover {
+        background-color: #5a6268;
+    }
+
+    @media (max-width: 600px) {
+        .btn {
+            font-size: 16px;
+            padding: 8px;
+        }
+
+        .form-container {
+            padding: 15px;
+            margin: 20px auto;
+        }
+
+        .form-container input,
+        .form-container select {
+            font-size: 14px;
+        }
+    }
+</style>
+
+<div class="form-container">
     <form method="post">
         {% csrf_token %}
 
@@ -57,10 +143,10 @@
         </div>
 
         <!-- Botón de envío -->
-        <button type="submit" class="btn btn-success btn-block">Guardar Producto</button>
+        <button type="submit" class="btn btn-success">Guardar Producto</button>
     </form>
 
-    <a href="{% url 'edit' %}" class="btn btn-secondary btn-block mt-2">Volver al Inicio</a>
+    <a href="{% url 'edit' %}" class="btn btn-secondary mt-2">Volver al Inicio</a>
 </div>
 
 <script>

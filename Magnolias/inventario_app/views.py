@@ -119,19 +119,27 @@ def editar_cadena_informacion(request):
 
     return render(request, 'editar_cadena_informacion.html', {'form': form})
 
-def seleccionar_tienda(request):
+from django.shortcuts import render, redirect
+from django.utils import timezone
 
+def seleccionar_tienda(request):
     contexto = {
         'fecha_actual': timezone.now(),
     }
     
     if request.method == 'POST':
         tienda_id = request.POST.get('tienda_id')
+        
+        tienda_id = tienda_id.zfill(3)
+        
         return redirect('registrar_visita_inventario', tienda_id=tienda_id)
-    return render(request, 'seleccionar_tienda.html',contexto)
+    
+    return render(request, 'seleccionar_tienda.html', contexto)
+
 
 def registrar_visita_inventario(request, tienda_id):
     cadena_info = CadenaInformacion.objects.first()
+    proxima_visita = cadena_info.dia_proxima_visita
     semana_actual = cadena_info.semana_proceso
     fecha_actual = timezone.now()
 
@@ -146,7 +154,7 @@ def registrar_visita_inventario(request, tienda_id):
 
     # Comprobar si ya existe una visita de inventario para esta tienda y semana
     try:
-        visita_existente = VisitaInventario.objects.get(co_tienda=tienda_id, semana=semana_actual)
+        visita_existente = VisitaInventario.objects.get(co_tienda=tienda_id)
         primera_vez = False
 
        
@@ -155,7 +163,7 @@ def registrar_visita_inventario(request, tienda_id):
 
         inv_inicial = visita_existente.inventario_inicial
 
-        dias_entre_visitas = (fecha_actual.date() - fecha_visita_anterior.date()).days if fecha_visita_anterior else None
+        dias_entre_visitas = (proxima_visita.date() - fecha_visita_anterior.date()).days if fecha_visita_anterior else None
 
 
     except VisitaInventario.DoesNotExist:
@@ -163,7 +171,7 @@ def registrar_visita_inventario(request, tienda_id):
         primera_vez = True
         fecha_visita_anterior = None
         inv_inicial = [0 for p in productos]
-        dias_entre_visitas = None
+        dias_entre_visitas = 1
 
     # Datos iniciales
 
@@ -253,7 +261,8 @@ def registrar_visita_inventario(request, tienda_id):
         'fecha_visita_anterior': fecha_visita_anterior,
         'inventario_inicial': inv_inicial,
         'dias_entre_visitas': dias_entre_visitas,
-        'precios_productos' : [p.valor_con_iva for p in productos]
+        'precios_productos' : [p.valor_con_iva for p in productos],
+        'proxima_visita':proxima_visita
     }
     rb = False
     if not primera_vez:
