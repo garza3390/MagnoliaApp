@@ -177,7 +177,7 @@ def registrar_visita_inventario(request, tienda_id):
     # Datos iniciales
 
     
-    messages.info(request, f'Primera vez: {primera_vez}')
+    
 
     if request.method == 'POST':
         # Obtener datos comunes (primer registro y subsecuentes)
