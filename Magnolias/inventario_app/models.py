@@ -7,7 +7,7 @@ class CadenaInformacion(models.Model):
     nombre_cadena = models.CharField(max_length=50, default='Inversiones AMPM S.A.')
     cedula_juridica = models.CharField(max_length=12, default='3-102-811609')
     semana_proceso = models.CharField(max_length=9,default='2000-43')
-    dia_proxima_visita = models.DateField(null=True, blank=True,default='2000-10-10')
+    dia_proxima_visita = models.DateField(null=True, blank=True,default='2024-11-30')
     rango_fecha_inicio = models.DateField(default=timezone.now().strftime('%Y-%m-%d'))
     rango_fecha_fin = models.DateField(default=timezone.now().strftime('%Y-%m-%d'))
     dias_de_covertura = models.IntegerField(null=True, default=21)
@@ -191,7 +191,7 @@ class VisitaInventario(models.Model):
         suma_conteo_venta = []
         cantidad_entregar = []
         por_vencer_50 = []
-        entregado_real = []
+        # entregado_real_l = []
         inventario_final = []
 
 
@@ -239,15 +239,15 @@ class VisitaInventario(models.Model):
                 pv_50 = 1
             por_vencer_50.append(pv_50)
 
-            entregado_real_val = 0
-            if cantidad_entregar_val > pv_50:
-                entregado_real_val = cantidad_entregar_val + pv_50
-            else:
-                entregado_real_val = pv_50
+            # entregado_real_val = 0
+            # if cantidad_entregar_val > pv_50:
+            #     entregado_real_val = cantidad_entregar_val + pv_50
+            # else:
+            #     entregado_real_val = pv_50
 
-            entregado_real.append(entregado_real_val)
+            # entregado_real_l.append(entregado_real_val)
 
-            inventario_final_val = int(conteo[idx]) + int(por_vencer[idx]) + int(canje[idx]) + int(entregado_real_val) + float(json.loads(self.temporada)[idx])
+            inventario_final_val = int(conteo[idx]) + int(por_vencer[idx]) + int(canje[idx]) + int(cantidad_entregar[idx]) + float(json.loads(self.temporada)[idx])
             inventario_final.append(int(inventario_final_val))
 
         # Almacenar resultados comprimidos en JSON
@@ -257,7 +257,7 @@ class VisitaInventario(models.Model):
         self.suma_conteo_vencer_venta_estimada = json.dumps(suma_conteo_venta)
         self.cantidad_entregar = json.dumps(cantidad_entregar)
         self.por_vencer_50_porciento = json.dumps(por_vencer_50)
-        self.entregado_real = json.dumps(entregado_real)
+        # self.entregado_real = json.dumps(entregado_real_l)
         self.inventario_final = json.dumps(inventario_final)
         self.venta_real = json.dumps(venta)
 

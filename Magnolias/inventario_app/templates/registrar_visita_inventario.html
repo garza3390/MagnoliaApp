@@ -136,28 +136,56 @@
                 {% endfor %}
                 {% else %}
                 {% for p,invi,e_ampm,cf,pven,dev,canj,aj,i_ampm,s_ampm,md,m_rec,e_real in all_data %}
+
+                {% if rb %}
                 <tr data-precio="{{ p.valor_con_iva }}">
                     <td>{{ p.codigo_producto }}</td>
                     <td>{{ p.nombre_producto }}</td>
                     <td>
                         <input type="number" name="inventario_inicial_{{ p.id }}" class="form-control" 
                                value="{{ invi }}"
-                               {% if not primera_vez %}readonly{% endif %}>
+                               readonly>
                     </td>
-                    <td><input type="number" name="existencia_ampm_{{ p.id }}" class="form-control existencia-ampm" value={{e_ampm}}></td>
-                    <td><input type="number" name="conteo_fisico_{{ p.id }}" class="form-control conteo-fisico" value={{cf}}></td>
-                    <td><input type="number" name="por_vencer_{{ p.id }}" class="form-control" value={{pven}}></td>
-                    <td><input type="number" name="devolucion_{{ p.id }}" class="form-control" value={{dev}}></td>
-                    <td><input type="number" name="canje_{{ p.id }}" class="form-control" value={{canj}}></td>
+                    <td><input type="number" name="existencia_ampm_{{ p.id }}" class="form-control existencia-ampm" value={{e_ampm}} readonly></td>
+                    <td><input type="number" name="conteo_fisico_{{ p.id }}" class="form-control conteo-fisico" value={{cf}} readonly></td>
+                    <td><input type="number" name="por_vencer_{{ p.id }}" class="form-control" value={{pven}} readonly></td>
+                    <td><input type="number" name="devolucion_{{ p.id }}" class="form-control" value={{dev}} readonly></td>
+                    <td><input type="number" name="canje_{{ p.id }}" class="form-control" value={{canj}} readonly></td>
                     <td>
                         <input type="number" name="ajuste_{{ p.id }}" class="form-control" value="{{ aj }}" readonly>
                     </td>
-                    <td><input type="number" name="inventario_ampm_{{ p.id }}" class="form-control inventario-ampm" value={{i_ampm}}></td>
-                    <td><input type="number" name="sugerido_ampm_{{ p.id }}" class="form-control sugerido-ampm" value={{s_ampm}}></td>
-                    <td><input type="number" name="minimo_display_{{ p.id }}" class="form-control" value={{md}}></td>
+                    <td><input type="number" name="inventario_ampm_{{ p.id }}" class="form-control inventario-ampm" value={{i_ampm}} readonly></td>
+                    <td><input type="number" name="sugerido_ampm_{{ p.id }}" class="form-control sugerido-ampm" value={{s_ampm}} readonly></td>
+                    <td><input type="number" name="minimo_display_{{ p.id }}" class="form-control" value={{md}} readonly></td>
                     <td><input type="number" name="recomendado_M_{{ p.id }}" class="form-control" value={{m_rec}} readonly></td>
-                    <td><input type="number" name="entregado_real_{{ p.id }}" class="form-control" value=0></td>
+                    <td><input type="number" name="entregado_real_{{ p.id }}" class="form-control" value={{e_real}} readonly></td>
                 </tr>
+                {%else%}
+
+                    <tr data-precio="{{ p.valor_con_iva }}">
+                        <td>{{ p.codigo_producto }}</td>
+                        <td>{{ p.nombre_producto }}</td>
+                        <td>
+                            <input type="number" name="inventario_inicial_{{ p.id }}" class="form-control" 
+                                value="{{ invi }}"
+                                {% if not primera_vez %}readonly{% endif %}>
+                        </td>
+                        <td><input type="number" name="existencia_ampm_{{ p.id }}" class="form-control existencia-ampm" value={{e_ampm}}></td>
+                        <td><input type="number" name="conteo_fisico_{{ p.id }}" class="form-control conteo-fisico" value={{cf}}></td>
+                        <td><input type="number" name="por_vencer_{{ p.id }}" class="form-control" value={{pven}}></td>
+                        <td><input type="number" name="devolucion_{{ p.id }}" class="form-control" value={{dev}}></td>
+                        <td><input type="number" name="canje_{{ p.id }}" class="form-control" value={{canj}}></td>
+                        <td>
+                            <input type="number" name="ajuste_{{ p.id }}" class="form-control" value="{{ aj }}" readonly>
+                        </td>
+                        <td><input type="number" name="inventario_ampm_{{ p.id }}" class="form-control inventario-ampm" value={{i_ampm}}></td>
+                        <td><input type="number" name="sugerido_ampm_{{ p.id }}" class="form-control sugerido-ampm" value={{s_ampm}}></td>
+                        <td><input type="number" name="minimo_display_{{ p.id }}" class="form-control" value={{md}}></td>
+                        <td><input type="number" name="recomendado_M_{{ p.id }}" class="form-control" value={{m_rec}} readonly></td>
+                        <td><input type="number" name="entregado_real_{{ p.id }}" class="form-control" value={{e_real}}></td>
+                    </tr>
+
+                {% endif %}
                 {% endfor %}
                 {% endif %}
             </tbody>

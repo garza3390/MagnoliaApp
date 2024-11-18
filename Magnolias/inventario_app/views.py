@@ -8,8 +8,12 @@ from django.contrib import messages
 from datetime import datetime
 
 
+from django.shortcuts import render, redirect
+from django.contrib import messages
+import json
+from django.utils import timezone
+
 def comprobate(request):
-    print("Comprobando que todas las tiendas estén bien...")
     visitas = VisitaInventario.objects.all()
     productos = ProductoDetalle.objects.all()
     obj = json.dumps([0 for p in productos])
@@ -17,55 +21,66 @@ def comprobate(request):
     not_visited = []
 
     if len(visitas) == 0:
-        messages.warning(request, f'La lista de visitas se encuentra vacía.')
+        messages.warning(request, 'La lista de visitas se encuentra vacía.')
         proceed = False
-    
-    for v in visitas:
 
+    for v in visitas:
         if v.registro_bloqueado != "S":
             not_visited.append(f'{v.co_tienda}:{v.codigo_tienda.nombre_tienda}\n')
             proceed = False
-            
-    
-    if proceed:
-        messages.success(request, 'Todos los registros estan bloqueados.')
-        messages.info(request, 'Procediendo con el restablecimiento de los datos de las visitas.')
-        try:
-            for v in visitas:
-                v.fecha_visita_anterior = v.fecha_visita_actual
-                v.inventario_inicial = v.inventario_final
-                v.existencia_informe_ampm = obj
-                v.conteo_fisico = obj
-                v.cantidad_por_vencer = obj
-                v.devolucion = obj
-                v.canje = obj
-                v.inventario_sistema_ampm = obj
-                v.ajuste = obj
-                v.promedio_diario_venta = obj
-                v.sugerido_sistema_ampm = obj
-                v.venta_estimada = obj
-                v.minimo_display = obj
-                v.suma_conteo_vencer_venta_estimada = obj
-                v.cantidad_entregar = obj
-                v.por_vencer_50_porciento = obj
-                v.entregado_real = obj
-                v.temporada = obj
-                v.inventario_final = obj
-                v.registro_bloqueado = 'N'
-                v.save()
 
-        except:
-            messages.error(request, f'Hubo un error tratando de restablecer los datos.')
+    if proceed:
+        # Si todas las visitas están bloqueadas, mostrar el mensaje de confirmación
+        if request.method == 'POST':
+            confirmacion = request.POST.get('confirmacion')
+            if confirmacion == 'ACUERDO':
+                messages.success(request, 'Todos los registros están bloqueados.')
+                messages.info(request, 'Procediendo con el restablecimiento de los datos de las visitas.')
+                try:
+                    for v in visitas:
+                        v.fecha_visita_anterior = v.fecha_visita_actual
+                        v.inventario_inicial = v.inventario_final
+                        v.existencia_informe_ampm = obj
+                        v.conteo_fisico = obj
+                        v.cantidad_por_vencer = obj
+                        v.devolucion = obj
+                        v.canje = obj
+                        v.inventario_sistema_ampm = obj
+                        v.ajuste = obj
+                        v.promedio_diario_venta = obj
+                        v.sugerido_sistema_ampm = obj
+                        v.venta_estimada = obj
+                        v.minimo_display = obj
+                        v.suma_conteo_vencer_venta_estimada = obj
+                        v.cantidad_entregar = obj
+                        v.por_vencer_50_porciento = obj
+                        v.entregado_real = obj
+                        v.temporada = obj
+                        v.inventario_final = obj
+                        v.registro_bloqueado = 'N'
+                        v.save()
+                    messages.success(request, 'Los datos se han restablecido correctamente.')
+                except:
+                    messages.error(request, 'Hubo un error tratando de restablecer los datos.')
+            else:
+                messages.error(request, 'La confirmación no fue correcta. Debe escribir "ACUERDO".')
+                return redirect('seleccionar_tienda')
+        else:
+            contexto = {
+                'fecha_actual': timezone.now(),
+                'version': '1.0.5',
+                'mostrar_confirmacion': True  # Para mostrar el formulario de confirmación
+            }
+            return render(request, 'seleccionar_tienda.html', contexto)
     else:
-        messages.info(request, f'No todas las tiendas han sido visitadas.')
-        all_tiendas_message = "Tiedas que no han sido visitadas:\n"
+        messages.info(request, 'No todas las tiendas han sido visitadas.')
+        all_tiendas_message = "Tiendas que no han sido visitadas:\n"
         for m in not_visited:
             all_tiendas_message += m
         messages.warning(request, all_tiendas_message)
         
-        return redirect("seleccionar_tienda")
-
     return redirect("seleccionar_tienda")
+
 
 def crear_visita_inventario(request):
     if request.method == 'POST':
@@ -125,7 +140,7 @@ from django.utils import timezone
 def seleccionar_tienda(request):
     contexto = {
         'fecha_actual': timezone.now(),
-        'version': '1.0.5'
+        'version': '1.0.6'
     }
     
     if request.method == 'POST':
@@ -190,6 +205,7 @@ def registrar_visita_inventario(request, tienda_id):
         inventario_ampm = []
         sugerido_ampm = []
         minimo_disp = []
+        entre_real = []
 
         for producto in productos:
             inv_i.append(int(request.POST.get(f'inventario_inicial_{producto.id}', 0)))
@@ -201,6 +217,7 @@ def registrar_visita_inventario(request, tienda_id):
             inventario_ampm.append(int(request.POST.get(f'inventario_ampm_{producto.id}', 0)))
             sugerido_ampm.append(int(request.POST.get(f'sugerido_ampm_{producto.id}', 0)))
             minimo_disp.append(int(request.POST.get(f'minimo_display_{producto.id}', 0)))
+            entre_real.append(int(request.POST.get(f'entregado_real_{producto.id}', 0)))
 
         # Para la primera vez, capturamos todos los campos iniciales
         if primera_vez:
@@ -223,6 +240,7 @@ def registrar_visita_inventario(request, tienda_id):
                 inventario_sistema_ampm=json.dumps(inventario_ampm),
                 sugerido_sistema_ampm = json.dumps(sugerido_ampm),
                 minimo_display=json.dumps(minimo_disp),
+                entregado_real = json.dumps(entre_real),
                 temporada=json.dumps([float(p.porcentaje_temporada) for p in productos]),
                 registro_bloqueado = 'S' if request.POST.get('registro_bloqueado') else 'N'
             )
@@ -230,6 +248,7 @@ def registrar_visita_inventario(request, tienda_id):
             return redirect('seleccionar_tienda')  # Redirigimos tras guardar
 
         else:
+            
             # Actualizar datos de una visita subsecuente
             visita_existente.semana = semana_actual
             visita_existente.fecha_visita_actual = fecha_actual
@@ -243,6 +262,7 @@ def registrar_visita_inventario(request, tienda_id):
             visita_existente.inventario_sistema_ampm=json.dumps(inventario_ampm)
             visita_existente.sugerido_sistema_ampm = json.dumps(sugerido_ampm)
             visita_existente.minimo_display = json.dumps(minimo_disp)
+            visita_existente.entregado_real = json.dumps(entre_real)
             visita_existente.temporada=json.dumps([float(p.porcentaje_temporada) for p in productos])
     
             visita_existente.registro_bloqueado = 'S' if request.POST.get('registro_bloqueado') else 'N'

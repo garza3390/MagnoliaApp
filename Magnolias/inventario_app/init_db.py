@@ -1,7 +1,7 @@
 import psycopg2
 from datetime import datetime
 
-ANYWHERE = True
+ANYWHERE = False
 # Conexión a la base de datos PostgreSQL
 
 if not ANYWHERE:
@@ -157,6 +157,19 @@ for producto in datos_productos:
         )
         VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
     ''', producto)
+
+# Insertar un registro inicial en la tabla cadena_informacion
+cursor.execute('''
+    INSERT INTO cadena_informacion (
+        nombre_cadena, cedula_juridica, semana_proceso, dia_proxima_visita,
+        rango_fecha_inicio, rango_fecha_fin, dias_de_covertura
+    )
+    VALUES (%s, %s, %s, %s, %s, %s, %s)
+''', (
+    'Inversiones AMPM S.A.', '3-102-811609', '2000-43', '2024-11-30',
+    datetime.now().strftime('%Y-%m-%d'), datetime.now().strftime('%Y-%m-%d'), 21
+))
+
 
 
 # Confirmar la transacción

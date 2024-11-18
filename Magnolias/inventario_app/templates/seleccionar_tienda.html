@@ -107,6 +107,17 @@
 </form>
 
 <div style="max-width: 500px; margin: 20px auto;">
+    {% if mostrar_confirmacion %}
+        <div style="max-width: 500px; margin: 20px auto; text-align: center;">
+            <p>SE VA A INICIAR UNA NUEVA SEMANA. ESTA DE ACUERDO:</p>
+            <form method="post" action="{% url 'comprobate' %}">
+                {% csrf_token %}
+                <input type="text" name="confirmacion" placeholder="Escriba 'ACUERDO'" required>
+                <button type="submit" class="btn btn-primary">Confirmar</button>
+            </form>
+        </div>
+    {% endif %}
+
     <a href="{% url 'edit' %}" class="btn btn-primary btn-block my-2">Editar Información</a>
     <a href="{% url 'comprobate' %}" class="btn btn-primary btn-block my-2">Revisión de Tiendas</a>
 </div>
