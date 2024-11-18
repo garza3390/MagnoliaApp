@@ -1,6 +1,6 @@
 import psycopg2
 
-ANYWHERE = False
+ANYWHERE = True
 # Conexión a la base de datos PostgreSQL
 
 if not ANYWHERE:

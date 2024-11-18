@@ -1,7 +1,7 @@
 import psycopg2
 from datetime import datetime
 
-ANYWHERE = False
+ANYWHERE = True
 # Conexión a la base de datos PostgreSQL
 
 if not ANYWHERE:
