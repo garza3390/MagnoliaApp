@@ -143,7 +143,7 @@
                     <td>
                         <input type="number" name="ajuste_{{ producto.id }}" class="form-control" value=0>
                     </td>
-                    <td><input type="number" name="pdv_{{ producto.id }}" class="form-control pdv" value=0></td>
+                    <td><input type="number" name="pdv_{{ producto.id }}" class="form-control pdv" value=0 readonly></td>
                     <td><input type="number" name="inventario_ampm_{{ producto.id }}" class="form-control inventario-ampm" value=0></td>
                     <td><input type="number" name="sugerido_ampm_{{ producto.id }}" class="form-control sugerido-ampm" value=0></td>
                     <td><input type="number" name="minimo_display_{{ producto.id }}" class="form-control" value=0></td>
@@ -171,7 +171,7 @@
                     <td>
                         <input type="number" name="ajuste_{{ p.id }}" class="form-control" value="{{ aj }}" readonly>
                     </td>
-                    <td><input type="number" name="pdv_{{ producto.id }}" class="form-control pdv" value={{pdv}}></td>
+                    <td><input type="number" name="pdv_{{ producto.id }}" class="form-control pdv" value={{pdv}} readonly></td>
                     <td><input type="number" name="inventario_ampm_{{ p.id }}" class="form-control inventario-ampm" value={{i_ampm}} readonly></td>
                     <td><input type="number" name="sugerido_ampm_{{ p.id }}" class="form-control sugerido-ampm" value={{s_ampm}} readonly></td>
                     <td><input type="number" name="minimo_display_{{ p.id }}" class="form-control" value={{md}} readonly></td>
@@ -196,7 +196,7 @@
                         <td>
                             <input type="number" name="ajuste_{{ p.id }}" class="form-control" value="{{ aj }}" readonly>
                         </td>
-                        <td><input type="number" name="pdv_{{ producto.id }}" class="form-control pdv" value={{pdv}}></td>
+                        <td><input type="number" name="pdv_{{ producto.id }}" class="form-control pdv" value={{pdv}} readonly></td>
                         <td><input type="number" name="inventario_ampm_{{ p.id }}" class="form-control inventario-ampm" value={{i_ampm}}></td>
                         <td><input type="number" name="sugerido_ampm_{{ p.id }}" class="form-control sugerido-ampm" value={{s_ampm}}></td>
                         <td><input type="number" name="minimo_display_{{ p.id }}" class="form-control" value={{md}}></td>
