@@ -63,8 +63,12 @@
         color: rgb(0, 0, 0);
         background-color: rgba(106, 169, 236, 0.5);
         font-weight: bold;
-        word-break: break-all;
         padding: 10px;
+        position: relative;
+    }
+
+    .table th i {
+        margin-right: 5px;
     }
 
     .table input.form-control {
@@ -72,18 +76,29 @@
         box-sizing: border-box;
         min-width: 90px;
     }
+
+    .totals-container {
+        background-color: #ffffff;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+    }
+
+    .options-container {
+        background-color: #e9ecef;
+        border-radius: 8px;
+    }
 </style>
 
 <div class="info-container">
-    <h2 class="text-center">Registro de Visita de Inventario</h2>
-    <p><strong>Tienda:</strong> {{ tienda.nombre_tienda }} ({{ tienda.codigo_tienda }})</p>
-    <p><strong>Semana:</strong> {{ semana_actual }}</p>
-    <p><strong>Código de Tienda:</strong> {{ tienda.codigo_tienda }}</p>
-    <p><strong>Fecha entrega anterior:</strong> {{ fecha_visita_anterior|date:"d/M/Y" }}</p>
-    <p><strong>Fecha actual:</strong> {{ fecha_actual|date:"d/M/Y" }}</p>
-    <p><strong>Fecha Proxima visita:</strong> {{ proxima_visita|date:"d/M/Y" }}</p>
-    <p name="dvisitas"><strong>Días entre visitas:</strong> {{ dias_entre_visitas }}</p>
-    <p><strong>Días de cobertura:</strong> {{ dias_de_cobertura }}</p>
+    <h2 class="text-center"><i class="fas fa-boxes"></i> Registro de Visita de Inventario</h2>
+    <p><strong><i class="fas fa-store"></i> Tienda:</strong> {{ tienda.nombre_tienda }} ({{ tienda.codigo_tienda }})</p>
+    <p><strong><i class="fas fa-calendar-week"></i> Semana:</strong> {{ semana_actual }}</p>
+    <p><strong><i class="fas fa-code"></i> Código de Tienda:</strong> {{ tienda.codigo_tienda }}</p>
+    <p><strong><i class="fas fa-calendar-alt"></i> Fecha entrega anterior:</strong> {{ fecha_visita_anterior|date:"d/M/Y" }}</p>
+    <p><strong><i class="fas fa-calendar-check"></i> Fecha actual:</strong> {{ fecha_actual|date:"d/M/Y" }}</p>
+    <p><strong><i class="fas fa-calendar-plus"></i> Fecha próxima visita:</strong> {{ proxima_visita|date:"d/M/Y" }}</p>
+    <p name="dvisitas"><strong><i class="fas fa-calendar-day"></i> Días entre visitas:</strong> {{ dias_entre_visitas }}</p>
+    <p><strong><i class="fas fa-clock"></i> Días de cobertura:</strong> {{ dias_de_cobertura }}</p>
 </div>
 
 <form method="post">
@@ -92,20 +107,21 @@
         <table class="table table-bordered">
             <thead>
                 <tr>
-                    <th>Producto ID</th>
-                    <th>Nombre Producto</th>
-                    <th>Inventario inicial</th>
-                    <th>Existencia AM_PM</th>
-                    <th>Conteo físico</th>
-                    <th>Cantidad por vencer</th>
-                    <th>Devolución</th>
-                    <th>Canje</th>
-                    <th>Ajuste</th>
-                    <th>Inventario AM_PM</th>
-                    <th>Sugerido AM_PM</th>
-                    <th>Mínimo display</th>
-                    <th>Recomendado por Magnolias</th>
-                    <th>Entrega Real</th>
+                    <th><i class="fas fa-barcode"></i> ID Producto</th>
+                    <th><i class="fas fa-tag"></i> Nombre</th>
+                    <th><i class="fas fa-warehouse"></i> Inventario Inicial</th>
+                    <th><i class="fas fa-cubes"></i> Existencia AM_PM</th>
+                    <th><i class="fas fa-clipboard-check"></i> Conteo Físico</th>
+                    <th><i class="fas fa-exclamation-triangle"></i> Por Vencer</th>
+                    <th><i class="fas fa-undo-alt"></i> Devolución</th>
+                    <th><i class="fas fa-exchange-alt"></i> Canje</th>
+                    <th><i class="fas fa-sliders-h"></i> Ajuste</th>
+                    <th><i class="fas fa-sliders-h"></i> PDV</th>
+                    <th><i class="fas fa-box"></i> Inventario AM_PM</th>
+                    <th><i class="fas fa-calculator"></i> Sugerido AM_PM</th>
+                    <th><i class="fas fa-sort-numeric-up"></i> Mínimo Display</th>
+                    <th><i class="fas fa-check-circle"></i> Recomendado</th>
+                    <th><i class="fas fa-truck-loading"></i> Entrega Real</th>
                 </tr>
             </thead>
             <tbody>
@@ -127,6 +143,7 @@
                     <td>
                         <input type="number" name="ajuste_{{ producto.id }}" class="form-control" value=0>
                     </td>
+                    <td><input type="number" name="pdv_{{ producto.id }}" class="form-control pdv" value=0></td>
                     <td><input type="number" name="inventario_ampm_{{ producto.id }}" class="form-control inventario-ampm" value=0></td>
                     <td><input type="number" name="sugerido_ampm_{{ producto.id }}" class="form-control sugerido-ampm" value=0></td>
                     <td><input type="number" name="minimo_display_{{ producto.id }}" class="form-control" value=0></td>
@@ -135,7 +152,7 @@
                 </tr>
                 {% endfor %}
                 {% else %}
-                {% for p,invi,e_ampm,cf,pven,dev,canj,aj,i_ampm,s_ampm,md,m_rec,e_real in all_data %}
+                {% for p,invi,e_ampm,cf,pven,dev,canj,aj,pdv,i_ampm,s_ampm,md,m_rec,e_real in all_data %}
 
                 {% if rb %}
                 <tr data-precio="{{ p.valor_con_iva }}">
@@ -154,6 +171,7 @@
                     <td>
                         <input type="number" name="ajuste_{{ p.id }}" class="form-control" value="{{ aj }}" readonly>
                     </td>
+                    <td><input type="number" name="pdv_{{ producto.id }}" class="form-control pdv" value={{pdv}}></td>
                     <td><input type="number" name="inventario_ampm_{{ p.id }}" class="form-control inventario-ampm" value={{i_ampm}} readonly></td>
                     <td><input type="number" name="sugerido_ampm_{{ p.id }}" class="form-control sugerido-ampm" value={{s_ampm}} readonly></td>
                     <td><input type="number" name="minimo_display_{{ p.id }}" class="form-control" value={{md}} readonly></td>
@@ -178,6 +196,7 @@
                         <td>
                             <input type="number" name="ajuste_{{ p.id }}" class="form-control" value="{{ aj }}" readonly>
                         </td>
+                        <td><input type="number" name="pdv_{{ producto.id }}" class="form-control pdv" value={{pdv}}></td>
                         <td><input type="number" name="inventario_ampm_{{ p.id }}" class="form-control inventario-ampm" value={{i_ampm}}></td>
                         <td><input type="number" name="sugerido_ampm_{{ p.id }}" class="form-control sugerido-ampm" value={{s_ampm}}></td>
                         <td><input type="number" name="minimo_display_{{ p.id }}" class="form-control" value={{md}}></td>
@@ -196,34 +215,32 @@
     <!-- Sección de totales y opciones -->
     <div class="totals-container mt-4 p-3 bg-light rounded shadow-sm">
         <div class="form-group mb-3">
-            <label for="venta_total" class="font-weight-bold">Venta Total:</label>
+            <label for="venta_total" class="font-weight-bold"><i class="fas fa-money-bill-wave"></i> Venta Total:</label>
             <input type="text" id="venta_total" class="form-control" readonly style="background-color: #f1f1f1;">
         </div>
         <div class="form-group mb-3">
-            <label for="devolucion_total" class="font-weight-bold">Devolución Total:</label>
+            <label for="devolucion_total" class="font-weight-bold"><i class="fas fa-undo-alt"></i> Devolución Total:</label>
             <input type="text" id="devolucion_total" class="form-control" readonly style="background-color: #f1f1f1;">
         </div>
     </div>
 
-    <!-- Sección de opciones adicionales -->
     <div class="options-container mt-3 p-3 bg-light rounded shadow-sm">
         <div class="form-group mb-3">
             <div class="custom-control custom-checkbox">
                 <input type="checkbox" class="custom-control-input" id="registro_bloqueado" name="registro_bloqueado" 
                     {% if rb %}checked{% endif %}>
-                <label class="custom-control-label" for="registro_bloqueado">Bloquear registro</label>
+                <label class="custom-control-label" for="registro_bloqueado"><i class="fas fa-lock"></i> Bloquear registro</label>
             </div>
         </div>
     </div>
 
-    <!-- Botón de envío -->
     <div class="text-center mt-4">
-        <button type="submit" class="btn btn-primary btn-lg">Guardar Visita de Inventario</button>
+        <button type="submit" class="btn btn-primary btn-lg"><i class="fas fa-save"></i> Guardar Visita de Inventario</button>
     </div>
 
 </form>
 
-<a href="{% url 'seleccionar_tienda' %}" class="btn btn-secondary btn-block mt-2">Volver al Inicio</a>
+<a href="{% url 'seleccionar_tienda' %}" class="btn btn-secondary btn-block mt-2"><i class="fas fa-arrow-left"></i> Volver al Inicio</a>
 
 <script>
     function calculateFields() {

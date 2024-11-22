@@ -8,10 +8,11 @@
     .form-container {
         max-width: 600px;
         margin: 40px auto;
-        padding: 20px;
-        background-color: #f9f9f9;
-        border-radius: 10px;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        padding: 25px;
+        background-color: #ffffff;
+        border-radius: 15px;
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+        border: 1px solid #dee2e6;
     }
 
     .form-container form {
@@ -23,22 +24,31 @@
     .form-container .form-group {
         width: 100%;
         margin-bottom: 15px;
+        position: relative;
     }
 
     .form-container .form-group label {
         display: block;
         margin-bottom: 5px;
         font-weight: bold;
+        color: #343a40;
     }
 
     .form-container input,
     .form-container select {
         width: 100%;
-        padding: 10px;
-        margin-bottom: 10px;
+        padding: 12px;
+        margin-bottom: 5px;
         border-radius: 5px;
-        border: 1px solid #ccc;
+        border: 1px solid #ced4da;
         font-size: 16px;
+        transition: border-color 0.3s, box-shadow 0.3s;
+    }
+
+    .form-container input:focus {
+        border-color: #007bff;
+        box-shadow: 0 0 5px rgba(0, 123, 255, 0.25);
+        outline: none;
     }
 
     .btn {
@@ -50,6 +60,8 @@
         text-align: center;
         text-decoration: none;
         margin-bottom: 15px;
+        transition: background-color 0.3s, box-shadow 0.3s;
+        box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
     }
 
     .btn-success {
@@ -60,6 +72,7 @@
 
     .btn-success:hover {
         background-color: #218838;
+        box-shadow: 0 4px 8px rgba(33, 136, 56, 0.2);
     }
 
     .btn-secondary {
@@ -70,6 +83,7 @@
 
     .btn-secondary:hover {
         background-color: #5a6268;
+        box-shadow: 0 4px 8px rgba(90, 98, 104, 0.2);
     }
 
     @media (max-width: 600px) {
@@ -88,65 +102,76 @@
             font-size: 14px;
         }
     }
+
+    .section-title {
+        margin-bottom: 10px;
+        font-size: 20px;
+        font-weight: bold;
+        color: #495057;
+        text-align: left;
+        border-bottom: 2px solid #dee2e6;
+        width: 100%;
+    }
 </style>
 
 <div class="form-container">
+    <h2 class="section-title"><i class="fas fa-plus-circle"></i> Información del Producto</h2>
     <form method="post">
         {% csrf_token %}
 
         <!-- Código del producto -->
         <div class="form-group">
-            {{ form.codigo_producto.label_tag }}
+            <label for="{{ form.codigo_producto.id_for_label }}"><i class="fas fa-barcode"></i> {{ form.codigo_producto.label }}</label>
             {{ form.codigo_producto }}
         </div>
 
         <!-- Nombre del producto -->
         <div class="form-group">
-            {{ form.nombre_producto.label_tag }}
+            <label for="{{ form.nombre_producto.id_for_label }}"><i class="fas fa-tag"></i> {{ form.nombre_producto.label }}</label>
             {{ form.nombre_producto }}
         </div>
 
         <!-- Código de barras -->
         <div class="form-group">
-            {{ form.codigo_barras.label_tag }}
+            <label for="{{ form.codigo_barras.id_for_label }}"><i class="fas fa-barcode"></i> {{ form.codigo_barras.label }}</label>
             {{ form.codigo_barras }}
         </div>
 
-        <!-- Valor sin IVA (editable) -->
+        <!-- Valor sin IVA -->
         <div class="form-group">
-            {{ form.valor_sin_iva.label_tag }}
+            <label for="{{ form.valor_sin_iva.id_for_label }}"><i class="fas fa-dollar-sign"></i> {{ form.valor_sin_iva.label }}</label>
             {{ form.valor_sin_iva }}
         </div>
 
-        <!-- IVA calculado automáticamente (solo lectura) -->
+        <!-- IVA calculado automáticamente -->
         <div class="form-group">
-            <label for="calculated_iva">IVA (13%):</label>
+            <label for="calculated_iva"><i class="fas fa-calculator"></i> IVA (13%):</label>
             <input type="text" id="calculated_iva" class="form-control" readonly>
         </div>
 
-        <!-- Valor con IVA calculado automáticamente (solo lectura) -->
+        <!-- Valor con IVA calculado automáticamente -->
         <div class="form-group">
-            <label for="calculated_valor_con_iva">Valor con IVA:</label>
+            <label for="calculated_valor_con_iva"><i class="fas fa-money-bill-wave"></i> Valor con IVA:</label>
             <input type="text" id="calculated_valor_con_iva" class="form-control" readonly>
         </div>
 
         <!-- Porcentaje de merma -->
         <div class="form-group">
-            {{ form.porcentaje_merma.label_tag }}
+            <label for="{{ form.porcentaje_merma.id_for_label }}"><i class="fas fa-percent"></i> {{ form.porcentaje_merma.label }}</label>
             {{ form.porcentaje_merma }}
         </div>
 
         <!-- Porcentaje de temporada -->
         <div class="form-group">
-            {{ form.porcentaje_temporada.label_tag }}
+            <label for="{{ form.porcentaje_temporada.id_for_label }}"><i class="fas fa-calendar-alt"></i> {{ form.porcentaje_temporada.label }}</label>
             {{ form.porcentaje_temporada }}
         </div>
 
         <!-- Botón de envío -->
-        <button type="submit" class="btn btn-success">Guardar Producto</button>
+        <button type="submit" class="btn btn-success"><i class="fas fa-save"></i> Guardar Producto</button>
     </form>
 
-    <a href="{% url 'edit' %}" class="btn btn-secondary mt-2">Volver al Inicio</a>
+    <a href="{% url 'edit' %}" class="btn btn-secondary mt-2"><i class="fas fa-arrow-left"></i> Volver al Inicio</a>
 </div>
 
 <script>

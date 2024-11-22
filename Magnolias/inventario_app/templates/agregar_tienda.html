@@ -8,28 +8,23 @@
     .form-container {
         max-width: 600px;
         margin: 40px auto;
-        padding: 20px;
-        background-color: #f9f9f9;
-        border-radius: 10px;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        padding: 25px;
+        background-color: #ffffff;
+        border-radius: 15px;
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+        border: 1px solid #dee2e6;
     }
 
-    .form-container form {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-    }
-
-    .form-container form p {
+    .form-group {
         width: 100%;
         margin-bottom: 15px;
     }
 
-    .form-container form label {
+    .form-group label {
         display: block;
         margin-bottom: 5px;
         font-weight: bold;
-        text-align: left;
+        color: #495057;
     }
 
     .form-container input,
@@ -40,10 +35,22 @@
         border-radius: 5px;
         border: 1px solid #ccc;
         font-size: 16px;
+        background-color: #f8f9fa;
+        transition: border-color 0.3s, box-shadow 0.3s;
+    }
+
+    .form-container input:focus,
+    .form-container select:focus {
+        border-color: #007bff;
+        box-shadow: 0 0 5px rgba(0, 123, 255, 0.25);
+        outline: none;
+        background-color: #ffffff;
     }
 
     .btn {
-        display: block;
+        display: flex;
+        align-items: center;
+        justify-content: center;
         width: 100%;
         font-size: 18px;
         padding: 10px;
@@ -51,6 +58,8 @@
         text-align: center;
         text-decoration: none;
         margin-bottom: 15px;
+        transition: background-color 0.3s, box-shadow 0.3s;
+        box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
     }
 
     .btn-success {
@@ -61,6 +70,7 @@
 
     .btn-success:hover {
         background-color: #218838;
+        box-shadow: 0 4px 8px rgba(33, 136, 56, 0.2);
     }
 
     .btn-secondary {
@@ -71,6 +81,7 @@
 
     .btn-secondary:hover {
         background-color: #5a6268;
+        box-shadow: 0 4px 8px rgba(90, 98, 104, 0.2);
     }
 
     @media (max-width: 600px) {
@@ -84,19 +95,91 @@
             margin: 20px auto;
         }
 
-        .form-container input,
-        .form-container select {
+        .form-group input,
+        .form-group select {
             font-size: 14px;
         }
+    }
+
+    .section-title {
+        margin-bottom: 20px;
+        font-size: 24px;
+        font-weight: bold;
+        color: #343a40;
+        text-align: center;
+        border-bottom: 2px solid #dee2e6;
     }
 </style>
 
 <div class="form-container">
+    <h2 class="section-title"><i class="fas fa-store"></i> Información de la Tienda</h2>
     <form method="post">
         {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit" class="btn btn-success">Guardar Tienda</button>
+        
+        <!-- Código de la tienda -->
+        <div class="form-group">
+            <label for="{{ form.codigo_tienda.id_for_label }}"><i class="fas fa-barcode"></i> {{ form.codigo_tienda.label }}</label>
+            {{ form.codigo_tienda }}
+        </div>
+
+        <!-- Nombre de la tienda -->
+        <div class="form-group">
+            <label for="{{ form.nombre_tienda.id_for_label }}"><i class="fas fa-tag"></i> {{ form.nombre_tienda.label }}</label>
+            {{ form.nombre_tienda }}
+        </div>
+
+        <!-- Grupo de la tienda -->
+        <div class="form-group">
+            <label for="{{ form.grupo_tienda.id_for_label }}"><i class="fas fa-layer-group"></i> {{ form.grupo_tienda.label }}</label>
+            {{ form.grupo_tienda }}
+        </div>
+
+        <!-- Ruta secuencial temporal -->
+        <div class="form-group">
+            <label for="{{ form.ruta_secuencial_temp.id_for_label }}"><i class="fas fa-route"></i> {{ form.ruta_secuencial_temp.label }}</label>
+            {{ form.ruta_secuencial_temp }}
+        </div>
+
+        <!-- Ruta secuencial fija -->
+        <div class="form-group">
+            <label for="{{ form.ruta_secuencial_fija.id_for_label }}"><i class="fas fa-map-marker-alt"></i> {{ form.ruta_secuencial_fija.label }}</label>
+            {{ form.ruta_secuencial_fija }}
+        </div>
+
+        <!-- Horario de cierre -->
+        <div class="form-group">
+            <label for="{{ form.horario_cierre_bodega.id_for_label }}"><i class="fas fa-clock"></i> {{ form.horario_cierre_bodega.label }}</label>
+            {{ form.horario_cierre_bodega }}
+        </div>
+
+        <!-- Fecha última visita -->
+        <div class="form-group">
+            <label for="{{ form.fecha_ultima_visita.id_for_label }}"><i class="fas fa-calendar"></i> {{ form.fecha_ultima_visita.label }}</label>
+            {{ form.fecha_ultima_visita }}
+        </div>
+
+        <!-- Teléfono -->
+        <div class="form-group">
+            <label for="{{ form.telefono.id_for_label }}"><i class="fas fa-phone"></i> {{ form.telefono.label }}</label>
+            {{ form.telefono }}
+        </div>
+
+        <!-- Correo -->
+        <div class="form-group">
+            <label for="{{ form.correo.id_for_label }}"><i class="fas fa-envelope"></i> {{ form.correo.label }}</label>
+            {{ form.correo }}
+        </div>
+
+        <!-- Dirección -->
+        <div class="form-group">
+            <label for="{{ form.direccion.id_for_label }}"><i class="fas fa-map"></i> {{ form.direccion.label }}</label>
+            {{ form.direccion }}
+        </div>
+
+        <!-- Botón de envío -->
+        <button type="submit" class="btn btn-success"><i class="fas fa-save"></i> Guardar Tienda</button>
     </form>
-    <a href="{% url 'edit' %}" class="btn btn-secondary mt-2">Volver al Inicio</a>
+
+    <a href="{% url 'edit' %}" class="btn btn-secondary mt-2"><i class="fas fa-arrow-left"></i> Volver al Inicio</a>
 </div>
 {% endblock %}

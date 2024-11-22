@@ -97,8 +97,8 @@
     <form method="post">
         {% csrf_token %}
         {{ form.as_p }}
-        <button type="submit" class="btn btn-success">Guardar Cambios</button>
+        <button type="submit" class="btn btn-success"><i class="fas fa-save"></i> Guardar Cambios</button>
     </form>
-    <a href="{% url 'edit' %}" class="btn btn-secondary mt-2">Volver al Inicio</a>
+    <a href="{% url 'edit' %}" class="btn btn-secondary mt-2"><i class="fas fa-arrow-left"></i> Volver al Inicio</a>
 </div>
 {% endblock %}

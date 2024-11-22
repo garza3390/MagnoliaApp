@@ -20,26 +20,32 @@
     form {
         max-width: 500px;
         margin: 20px auto;
-        padding: 15px;
+        padding: 20px;
         background-color: #ffffff;
         border-radius: 10px;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        position: relative;
     }
 
     label {
         display: block;
         margin-bottom: 8px;
         color: #495057;
+        font-weight: bold;
     }
 
     input[type="text"] {
         width: 100%;
-        padding: 10px;
+        padding: 10px 35px 10px 10px;
         margin-bottom: 15px;
         border: 1px solid #ced4da;
         border-radius: 5px;
         box-sizing: border-box;
         font-size: 16px;
+        background-image: url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/svgs/solid/store.svg');
+        background-repeat: no-repeat;
+        background-position: right 10px center;
+        background-size: 20px;
     }
 
     button {
@@ -51,10 +57,19 @@
         color: #ffffff;
         font-size: 16px;
         cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 5px;
+        transition: background-color 0.3s;
     }
 
     button:hover {
         background-color: #0056b3;
+    }
+
+    button i {
+        font-size: 18px;
     }
 
     .btn-block {
@@ -94,36 +109,42 @@
         text-align: center;
         margin-top: 10px;
     }
+
+    input[type="text"]:focus {
+        border-color: #007bff;
+        outline: none;
+        box-shadow: 0 0 5px rgba(0, 123, 255, 0.3);
+    }
 </style>
 
-<h2>Selecciona una Tienda</h2>
+<h2><i class="fas fa-store-alt"></i> Selecciona una Tienda</h2>
 <p>Fecha actual: {{ fecha_actual|date:"d/m/Y" }}</p>
 
 <form method="post">
     {% csrf_token %}
-    <label for="tienda_id">ID de Tienda:</label>
+    <label for="tienda_id"><i class="fas fa-id-badge"></i> ID de Tienda:</label>
     <input type="text" name="tienda_id" id="tienda_id" placeholder="Ingrese el ID de la tienda" required>
-    <button type="submit" class="btn btn-primary">Continuar</button>
+    <button type="submit" class="btn btn-primary"><i class="fas fa-arrow-right"></i> Continuar</button>
 </form>
 
 <div style="max-width: 500px; margin: 20px auto;">
     {% if mostrar_confirmacion %}
         <div style="max-width: 500px; margin: 20px auto; text-align: center;">
-            <p>SE VA A INICIAR UNA NUEVA SEMANA. ESTA DE ACUERDO:</p>
+            <p><i class="fas fa-exclamation-circle"></i> SE VA A INICIAR UNA NUEVA SEMANA. ESTA DE ACUERDO:</p>
             <form method="post" action="{% url 'comprobate' %}">
                 {% csrf_token %}
                 <input type="text" name="confirmacion" placeholder="Escriba 'ACUERDO'" required>
-                <button type="submit" class="btn btn-primary">Confirmar</button>
+                <button type="submit" class="btn btn-primary"><i class="fas fa-check"></i> Confirmar</button>
             </form>
         </div>
     {% endif %}
 
-    <a href="{% url 'edit' %}" class="btn btn-primary btn-block my-2">Editar Información</a>
-    <a href="{% url 'comprobate' %}" class="btn btn-primary btn-block my-2">Revisión de Tiendas</a>
+    <a href="{% url 'edit' %}" class="btn btn-primary btn-block my-2"><i class="fas fa-edit"></i> Editar Información</a>
+    <a href="{% url 'comprobate' %}" class="btn btn-primary btn-block my-2"><i class="fas fa-clipboard-check"></i> Revisión de Tiendas</a>
 </div>
 
 <div class="version-info">
-    Versión del sistema: {{ version }}
+    <i class="fas fa-info-circle"></i> Versión del sistema: {{ version }}
 </div>
 {% endblock %}
 

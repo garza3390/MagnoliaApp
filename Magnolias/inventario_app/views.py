@@ -140,7 +140,7 @@ from django.utils import timezone
 def seleccionar_tienda(request):
     contexto = {
         'fecha_actual': timezone.now(),
-        'version': '1.0.6'
+        'version': '1.0.7'
     }
     
     if request.method == 'POST':
@@ -301,6 +301,7 @@ def registrar_visita_inventario(request, tienda_id):
                     json.loads(visita_existente.devolucion),
                     json.loads(visita_existente.canje),
                     json.loads(visita_existente.ajuste),
+                    json.loads(visita_existente.promedio_diario_venta),
                     json.loads(visita_existente.inventario_sistema_ampm),
                     json.loads(visita_existente.sugerido_sistema_ampm),
                     json.loads(visita_existente.minimo_display),
